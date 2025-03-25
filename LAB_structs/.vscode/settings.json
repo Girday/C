@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "structs.h": "c",
+        "deque_dbl.h": "c",
+        "stack_dbl.h": "c",
+        "stdio.h": "c",
+        "list_dbl.h": "c",
+        "stdlib.h": "c"
+    }
+}

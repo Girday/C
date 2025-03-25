@@ -1,0 +1,101 @@
+brand,model,mechanism_type,case_material,case_diameter,case_thickness,glass_type,water_resistance,power_reserve,bracelet_type,price
+Rolex,Portugieser,Hand-wound,Carbon Fiber,39,11,Sapphire,500,40,Leather,15000
+Patek Philippe,Presage,Hand-wound,Stainless Steel,39,11,Sapphire,200,60,NATO,2500
+Tag Heuer,Presage,Hand-wound,Ceramic,38,15,Acrylic,500,80,Rubber,1500
+Tag Heuer,Presage,Automatic,Titanium,42,9,Acrylic,100,50,Leather,5000
+Seiko,Santos,Hand-wound,Titanium,36,13,Sapphire,100,80,Metal,2500
+Tissot,Speedmaster,Hand-wound,Stainless Steel,38,12,Acrylic,100,38,Rubber,2500
+Cartier,Speedmaster,Hand-wound,Ceramic,36,9,Acrylic,50,72,NATO,2500
+Cartier,Presage,Hand-wound,Ceramic,42,11,Acrylic,200,40,Leather,2500
+Seiko,Speedmaster,Automatic,Carbon Fiber,36,10,Acrylic,500,48,Leather,7000
+Longines,Presage,Automatic,Carbon Fiber,38,10,Mineral,30,48,Metal,10000
+Cartier,Santos,Automatic,Gold,44,13,Mineral,200,80,Metal,25000
+Patek Philippe,Portugieser,Automatic,Carbon Fiber,44,11,Acrylic,500,42,Rubber,25000
+Cartier,Presage,Hand-wound,Carbon Fiber,42,11,Acrylic,50,48,Rubber,1500
+Tag Heuer,Carrera,Automatic,Carbon Fiber,41,15,Sapphire,200,48,Leather,3500
+Omega,Submariner,Automatic,Gold,44,11,Sapphire,30,72,Rubber,1000
+Tag Heuer,Presage,Hand-wound,Ceramic,40,13,Sapphire,500,40,NATO,25000
+Seiko,Carrera,Hand-wound,Carbon Fiber,38,13,Mineral,200,80,NATO,3500
+Longines,Santos,Hand-wound,Gold,38,12,Acrylic,200,72,NATO,1500
+Patek Philippe,Carrera,Hand-wound,Ceramic,39,12,Acrylic,500,38,Rubber,25000
+Seiko,Santos,Automatic,Stainless Steel,44,9,Acrylic,30,38,Leather,15000
+Tag Heuer,Calatrava,Hand-wound,Titanium,41,13,Mineral,30,45,NATO,25000
+Tag Heuer,Le Locle,Hand-wound,Gold,36,9,Mineral,30,50,NATO,7000
+Rolex,Santos,Hand-wound,Stainless Steel,44,12,Mineral,30,48,Rubber,50000
+IWC,Calatrava,Automatic,Gold,44,12,Mineral,300,50,NATO,10000
+Breitling,Portugieser,Hand-wound,Stainless Steel,41,11,Sapphire,200,60,Metal,1000
+Tissot,Portugieser,Automatic,Stainless Steel,42,9,Mineral,50,45,NATO,500
+Patek Philippe,Presage,Automatic,Carbon Fiber,40,14,Mineral,500,72,NATO,1500
+Omega,Navitimer,Automatic,Ceramic,45,9,Sapphire,100,80,Leather,3500
+Cartier,Speedmaster,Automatic,Carbon Fiber,36,15,Mineral,100,80,NATO,2500
+Tissot,Carrera,Hand-wound,Stainless Steel,39,9,Sapphire,200,80,Rubber,500
+IWC,HydroConquest,Automatic,Carbon Fiber,38,10,Mineral,300,60,Metal,25000
+Rolex,HydroConquest,Automatic,Ceramic,45,11,Sapphire,100,45,Leather,5000
+Tag Heuer,Santos,Automatic,Gold,42,12,Mineral,300,40,Leather,2500
+Cartier,Navitimer,Hand-wound,Gold,39,11,Sapphire,50,42,NATO,15000
+Seiko,Calatrava,Automatic,Titanium,44,14,Mineral,50,38,Metal,2500
+Seiko,Submariner,Automatic,Carbon Fiber,38,12,Mineral,300,40,NATO,25000
+Cartier,Presage,Hand-wound,Titanium,44,15,Mineral,500,80,Leather,1500
+Seiko,HydroConquest,Automatic,Stainless Steel,45,10,Acrylic,100,45,Metal,2500
+Rolex,Navitimer,Hand-wound,Titanium,41,15,Mineral,200,60,Rubber,7000
+IWC,HydroConquest,Hand-wound,Titanium,42,10,Acrylic,500,40,NATO,2500
+Rolex,Portugieser,Hand-wound,Gold,41,15,Mineral,30,38,NATO,1500
+Cartier,Portugieser,Hand-wound,Ceramic,40,15,Acrylic,500,40,Metal,1500
+Patek Philippe,Le Locle,Automatic,Stainless Steel,39,11,Sapphire,200,80,Metal,1000
+Seiko,Portugieser,Hand-wound,Stainless Steel,40,14,Sapphire,200,42,Rubber,1000
+Omega,Calatrava,Automatic,Gold,41,11,Acrylic,100,60,Rubber,1500
+Omega,Carrera,Automatic,Ceramic,38,12,Acrylic,500,45,Leather,50000
+Patek Philippe,Le Locle,Hand-wound,Carbon Fiber,41,13,Mineral,500,48,NATO,1500
+Breitling,Santos,Hand-wound,Ceramic,41,10,Sapphire,200,45,Leather,15000
+Breitling,HydroConquest,Automatic,Stainless Steel,41,13,Acrylic,100,72,Rubber,500
+Seiko,Navitimer,Automatic,Ceramic,44,14,Mineral,200,38,Leather,3500
+IWC,Le Locle,Automatic,Titanium,44,10,Mineral,30,45,Rubber,1500
+Tissot,Speedmaster,Automatic,Gold,42,15,Acrylic,30,38,Metal,7000
+Breitling,Presage,Automatic,Gold,45,12,Acrylic,50,48,NATO,50000
+Omega,Le Locle,Automatic,Stainless Steel,44,12,Acrylic,300,42,Rubber,1000
+Omega,Navitimer,Hand-wound,Ceramic,36,10,Acrylic,30,38,NATO,25000
+IWC,Le Locle,Automatic,Stainless Steel,42,9,Acrylic,100,80,Rubber,1500
+Breitling,HydroConquest,Automatic,Gold,41,11,Sapphire,500,80,NATO,10000
+Breitling,Carrera,Automatic,Gold,40,14,Mineral,50,50,Rubber,50000
+Longines,Portugieser,Automatic,Stainless Steel,45,10,Acrylic,500,40,Leather,50000
+Breitling,HydroConquest,Hand-wound,Titanium,42,15,Acrylic,30,42,NATO,25000
+Cartier,Le Locle,Automatic,Ceramic,41,9,Sapphire,100,38,Rubber,7000
+Tissot,Calatrava,Automatic,Ceramic,40,11,Acrylic,50,60,NATO,10000
+IWC,Le Locle,Hand-wound,Carbon Fiber,44,10,Mineral,500,48,NATO,7000
+Omega,Navitimer,Automatic,Ceramic,39,13,Mineral,100,50,Leather,1000
+Breitling,Navitimer,Hand-wound,Ceramic,36,15,Sapphire,500,50,NATO,1500
+Patek Philippe,HydroConquest,Automatic,Ceramic,36,13,Sapphire,30,48,NATO,15000
+Seiko,Navitimer,Automatic,Carbon Fiber,40,15,Mineral,300,60,NATO,25000
+Tag Heuer,Carrera,Hand-wound,Titanium,42,14,Sapphire,500,42,Rubber,3500
+IWC,Portugieser,Hand-wound,Stainless Steel,39,10,Mineral,30,45,Metal,3500
+Tissot,Speedmaster,Automatic,Stainless Steel,40,11,Acrylic,300,38,Rubber,50000
+Longines,Submariner,Hand-wound,Ceramic,41,12,Mineral,300,40,Leather,25000
+Patek Philippe,Calatrava,Hand-wound,Titanium,45,15,Sapphire,200,45,Metal,1500
+Seiko,Carrera,Automatic,Carbon Fiber,40,11,Sapphire,200,38,Leather,1500
+Patek Philippe,Submariner,Automatic,Gold,39,15,Acrylic,30,38,Leather,500
+Longines,Speedmaster,Hand-wound,Gold,38,15,Acrylic,50,40,Rubber,5000
+Longines,Santos,Hand-wound,Carbon Fiber,40,12,Acrylic,300,50,Leather,5000
+Omega,Le Locle,Hand-wound,Gold,44,11,Sapphire,200,60,Rubber,5000
+Tissot,Submariner,Automatic,Titanium,41,11,Acrylic,50,60,Leather,500
+Tag Heuer,HydroConquest,Automatic,Gold,45,12,Sapphire,100,72,Leather,25000
+Patek Philippe,Presage,Automatic,Carbon Fiber,38,13,Sapphire,200,45,Metal,7000
+Seiko,Presage,Hand-wound,Carbon Fiber,36,11,Mineral,300,38,Leather,2500
+Longines,HydroConquest,Automatic,Ceramic,38,14,Mineral,50,45,Leather,50000
+Tag Heuer,Santos,Hand-wound,Gold,36,15,Mineral,50,40,NATO,5000
+Tag Heuer,Speedmaster,Automatic,Stainless Steel,41,13,Sapphire,100,50,Metal,15000
+Patek Philippe,Carrera,Hand-wound,Carbon Fiber,42,10,Mineral,100,40,NATO,25000
+Rolex,HydroConquest,Hand-wound,Ceramic,36,11,Sapphire,100,45,Rubber,5000
+Seiko,Carrera,Automatic,Titanium,41,12,Mineral,30,60,Leather,1000
+Rolex,HydroConquest,Hand-wound,Carbon Fiber,44,14,Sapphire,300,80,Leather,25000
+Seiko,Calatrava,Hand-wound,Stainless Steel,40,12,Acrylic,50,48,Rubber,10000
+Tissot,Santos,Hand-wound,Stainless Steel,36,11,Sapphire,100,38,Leather,1500
+Patek Philippe,Carrera,Hand-wound,Carbon Fiber,44,13,Mineral,200,80,Rubber,1000
+Tag Heuer,Speedmaster,Hand-wound,Ceramic,42,14,Mineral,50,72,NATO,500
+Longines,Speedmaster,Automatic,Titanium,40,10,Sapphire,300,60,Rubber,7000
+Tissot,Carrera,Hand-wound,Ceramic,36,10,Mineral,500,48,Rubber,5000
+Seiko,HydroConquest,Hand-wound,Ceramic,39,11,Acrylic,200,45,NATO,10000
+Omega,Portugieser,Hand-wound,Carbon Fiber,38,12,Sapphire,50,42,Metal,15000
+Cartier,Carrera,Automatic,Ceramic,44,13,Mineral,100,80,Rubber,25000
+Breitling,Submariner,Automatic,Gold,38,11,Mineral,300,80,Rubber,1500
+IWC,Submariner,Hand-wound,Stainless Steel,42,10,Sapphire,30,48,Rubber,3500
+Patek Philippe,Carrera,Hand-wound,Carbon Fiber,42,11,Sapphire,200,80,NATO,1500
