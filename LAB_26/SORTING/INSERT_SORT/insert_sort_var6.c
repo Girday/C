@@ -1,68 +1,68 @@
-#include "../LAB_structs/DIFFICULT_STRUCTS/dbl/queue_dbl.h"
+#include "../LAB_structs/DIFFICULT_STRUCTS/dbl/deque_dbl.h"
 
-int step_of_a_sort(queue_dbl* q) {
+int step_of_a_sort(deque_dbl* deq) {
 
-    if (qdbl_is_empty(q))
+    if (ddbl_is_empty(deq))
         return 0;
 
-    double e1 = qdbl_pop(q);
+    double e1 = ddbl_pop_front(deq);
 
-    if (qdbl_is_empty(q)) {
-        qdbl_push(q, e1);
+    if (ddbl_is_empty(deq)) {
+        ddbl_push(deq, e1);
         return 0;
     }
 
-    queue_dbl* storage = qdbl_create(10);
-    double e2 = qdbl_pop(q);
+    deque_dbl* storage = ddbl_create(10);
+    double e2 = ddbl_pop_front(deq);
 
     while (e2 >= e1) {
 
-        qdbl_push(storage, e1);
+        ddbl_push(storage, e1);
     
         e1 = e2;
 
-        if (qdbl_is_empty(q)) {
+        if (ddbl_is_empty(deq)) {
             
-            qdbl_push(storage, e1);
+            ddbl_push(storage, e1);
 
-            while (!qdbl_is_empty(storage))
-                qdbl_push(q, qdbl_pop(storage));
+            while (!ddbl_is_empty(storage))
+                ddbl_push(deq, ddbl_pop_front(storage));
 
             return 0;
 
         }
 
-        e2 = qdbl_pop(q);
+        e2 = ddbl_pop_front(deq);
     
     }
 
-    qdbl_push(storage, e1);
+    ddbl_push(storage, e1);
 
-    while (!qdbl_is_empty(q))
-        qdbl_push(storage, qdbl_pop(q));
+    while (!ddbl_is_empty(deq))
+        ddbl_push(storage, ddbl_pop_front(deq));
 
     int was_added = 0;
 
-    while (!qdbl_is_empty(storage)) {
+    while (!ddbl_is_empty(storage)) {
 
-        e1 = qdbl_pop(storage);
+        e1 = ddbl_pop_front(storage);
 
         if (e1 <= e2) 
-            qdbl_push(q, e1);
+            ddbl_push(deq, e1);
 
         else if (!was_added) {
-            qdbl_push(q, e2);
+            ddbl_push(deq, e2);
             was_added = 1;
         }
     }
 
     if (!was_added) 
-        qdbl_push(q, e2);
+        ddbl_push(deq, e2);
     
     return 1;
 
 }
 
-void insert_sort(queue_dbl* q) {
-    while (step_of_a_sort(q));
+void insert_sort(deque_dbl* deq) {
+    while (step_of_a_sort(deq));
 }

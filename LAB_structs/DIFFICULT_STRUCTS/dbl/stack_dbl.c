@@ -102,3 +102,11 @@ int sdbl_shrink_if_needed(stack_dbl* sdbl) {
 
 }
 
+double sdbl_top(stack_dbl* sdbl) {
+    
+    double elem = sdbl_pop(sdbl);
+    sdbl_push(sdbl, elem);
+
+    return elem;
+
+}
