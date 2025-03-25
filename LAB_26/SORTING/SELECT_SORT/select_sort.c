@@ -1,11 +1,11 @@
-// #include "../Structs/Extended/stack/stack_dbl.h"
+#include "../LAB_structs/DIFFICULT_STRUCTS/dbl/stack_dbl.h"
 
-double remove_max(stack_dbl* obj) {
-    stack_dbl* storage = create();
-    double cur_max = sdbl_pop_back(obj);
+double remove_max(stack_dbl* st) {
+    stack_dbl* storage = sdbl_create(10);
+    double cur_max = sdbl_pop_back(st);
     sdbl_push_back(storage, cur_max);
-    while (!sdbl_is_empty(obj)) {
-        double cur = sdbl_pop_back(obj);
+    while (!sdbl_is_empty(st)) {
+        double cur = sdbl_pop_back(st);
         if (cur > cur_max) cur_max = cur;
         sdbl_push_back(storage, cur);
     }
@@ -13,7 +13,7 @@ double remove_max(stack_dbl* obj) {
     while (!sdbl_is_empty(storage)) {
         double cur = sdbl_pop_back(storage);
         if (cur != cur_max || was_removed) {
-            sdbl_push_back(obj, cur);
+            sdbl_push_back(st, cur);
             continue;
         }
         was_removed = 1;
@@ -22,9 +22,9 @@ double remove_max(stack_dbl* obj) {
     return cur_max;
 }
 
-void select_sort(stack_dbl* obj) {
+void select_sort(stack_dbl* st) {
     stack_dbl* sorted = create();
-    while (!sdbl_is_empty(obj)) sdbl_push_back(sorted, remove_max(obj));
-    while (!sdbl_is_empty(sorted)) sdbl_push_back(obj, sdbl_pop(back(sorted)));
+    while (!sdbl_is_empty(st)) sdbl_push_back(sorted, remove_max(st));
+    while (!sdbl_is_empty(sorted)) sdbl_push_back(st, sdbl_pop(back(sorted)));
     sdbl_destroy(sorted);
 }

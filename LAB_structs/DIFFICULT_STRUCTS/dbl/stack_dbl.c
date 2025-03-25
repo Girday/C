@@ -37,6 +37,10 @@ int sdbl_is_empty(stack_dbl* sdbl) {
     return sdbl -> len == 0;
 }
 
+int sdbl_get_size(stack_dbl* sdbl) {
+    return sdbl -> len;
+}
+
 double sdbl_pop(stack_dbl* sdbl) {
     
     if (sdbl_is_empty(sdbl)) {
