@@ -17,7 +17,6 @@ int step_of_a_sort(queue_dbl* q) {
 
     while (e2 >= e1) {
         qdbl_push(storage, e1);
-    
         e1 = e2;
 
         if (qdbl_is_empty(q)) {
