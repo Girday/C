@@ -147,6 +147,7 @@ int dstr_shrink_if_needed(deque_str* dstr) {
     
 
     char** new_buf = malloc(sizeof(char*) * new_max_len);
+
     if (new_buf == NULL)
         return 0;
 
@@ -160,6 +161,7 @@ int dstr_shrink_if_needed(deque_str* dstr) {
     }
 
     free(dstr -> buf);
+    
     dstr -> buf = new_buf;
     dstr -> start = 0;
     dstr -> max_len = new_max_len;
