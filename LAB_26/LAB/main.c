@@ -15,7 +15,7 @@ char* read_line() {
     int c;
 
     while ((c = getchar()) != '\n' && c != EOF) {
-        buffer[len++] = (char)c;
+        buffer[len++] = (char) c;
 
         if (len >= capacity - 1) {
             capacity *= 2;
@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
     
-    printf("Enter lines (empty line to finish):\n");
+    printf("Enter any lines (and hit just \"Enter\" when you're done):\n");
 
     while (1) {
         char* line = read_line();
@@ -73,14 +73,14 @@ int main() {
     
     insert_sort(deque);
     
-    printf("\nSorted lines:\n");
+    printf("\nSorted lines:\n\n");
 
+    int i = 1;
     while (!dstr_is_empty(deque)) {
         char* s = dstr_pop_front(deque);
-        printf("%s\n", s);
+        printf("%d.  %s\n", i++, s);
         free(s);
     }
     
     dstr_destroy(deque);
-    return 0;
 }
