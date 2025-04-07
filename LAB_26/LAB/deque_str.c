@@ -12,6 +12,7 @@ deque_str* dstr_create(int max_len) {
     }
 
     res -> buf = malloc(sizeof(char*) * max_len);
+    
     if (res -> buf == NULL) {
         fprintf(stderr, "Creating deque of strings failed\n");
         free(res);
@@ -52,6 +53,7 @@ char* dstr_pop_back(deque_str* dstr) {
 
     int index = (dstr -> start + dstr -> len - 1) % dstr -> max_len;
     char* elem = dstr -> buf[index];
+
     dstr -> buf[index] = NULL;
     dstr -> len--;
 
@@ -65,6 +67,7 @@ char* dstr_pop_front(deque_str* dstr) {
     }
 
     char* elem = dstr -> buf[dstr -> start];
+    
     dstr -> buf[dstr -> start] = NULL;
     dstr -> start = (dstr -> start + 1) % dstr -> max_len;
     dstr -> len--;
