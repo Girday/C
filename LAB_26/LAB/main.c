@@ -43,11 +43,9 @@ char* read_line() {
 int main() {
     deque_str* deque = dstr_create(10);
 
-    if (!deque) {
-        fprintf(stderr, "Creating deque of strings failed\n");
+    if (!deque)
         return 1;
-    }
-    
+        
     printf("Enter any lines (and hit just \"Enter\" when you're done):\n");
 
     while (1) {

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "..\..\LAB_structs\ITERS_AND_LISTS\VECTOR\vector_int.h"
+#include <stdlib.h>
+
 typedef struct treeNode treeNode;
 struct treeNode {
     double val;
@@ -20,3 +23,8 @@ void destroyRecursive(tree t);
 
 tree add(tree t, double val);
 tree removeNode(tree t, double val);
+
+int getDepth(tree t);
+int levelWidth(tree t, int k);
+int getWidthByBFS(tree t);
+int getWidthByVector(tree t);
