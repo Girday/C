@@ -179,7 +179,7 @@ static void widthsVector(tree t, vector_int* vint, int k) {
         return;
     
     if (vint_get_size(vint) < k + 1)
-        vint_set_size(vint, k + 1)
+        vint_set_size(vint, k + 1);
     
     vint_set(vint, k, vint_get(vint, k) + 1);
     widths(getLeft(t), vint, k + 1);
