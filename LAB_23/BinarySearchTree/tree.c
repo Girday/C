@@ -182,14 +182,14 @@ static void widthsVector(tree t, vector_int* vint, int k) {
         vint_set_size(vint, k + 1);
     
     vint_set(vint, k, vint_get(vint, k) + 1);
-    widths(getLeft(t), vint, k + 1);
-    widths(getRight(t), vint, k + 1);
+    widthsVector(getLeft(t), vint, k + 1);
+    widthsVector(getRight(t), vint, k + 1);
 }
 
 int getWidthByVector(tree t) {
     vector_int* vint = vint_create(0);
 
-    widthVector(t, vint, 0);
+    widthsVector(t, vint, 0);
     int res = 0;
     
     for (int i = 0; i < vint_get_size(vint); i++)
