@@ -1,6 +1,8 @@
 #include "tree.h"
 #include <stdlib.h>
-#include "..\..\LAB_structs\DIFFICULT_STRUCTS\tree\queue_tree.h"
+#include <stdio.h>
+#include "./vectorOnInt/vector_int.h"
+#include "./queueOnTree/queue_tree.h"
 
 tree createEmpty() {
     return NULL;
@@ -11,14 +13,29 @@ int isEmpty(tree t) {
 }
 
 double getValue(tree t) {
+    if (t == NULL) {
+        printf("Error: Attempt to get value from NULL node.\n");
+        return 0.0;
+    }
+    
     return t -> val;
 }
 
 tree getLeft(tree t) {
+    if (t == NULL) {
+        printf("Error: Attempt to get left child from NULL node.\n");
+        return NULL;
+    }
+
     return t -> left;
 }
 
 tree getRight(tree t) {
+    if (t == NULL) {
+        printf("Error: Attempt to get right child from NULL node.\n");
+        return NULL;
+    }
+
     return t -> right;
 }
 
@@ -50,44 +67,18 @@ void destroyRecursive(tree t) {
     destroy(t);
 }
 
-/*
-    Обычное добавление
-
-tree add(tree t, double val) {
-    if (isEmpty(t))
-        return build(val, createEmpty(), createEmpty());
-    
-    if (val < getValue(t)) {
-        tree left = add(getLeft(t), val);
-        tree res = build(getValue(t), left, getRight(t));
-        
-        destroy(t);
-
-        return res;
-    } 
-
-    else if (val > getValue(t)) {
-        tree right = add(getRight(t), val);
-        tree res = build(getValue(t), getLeft(t), right);
-        
-        destroy(t);
-        
-        return res;
-    } 
-
-    else 
-        return t;
-}
-
-*/
-
-// Добавление на двойных указателях 
-
 int add(tree *t, double val) {
     if (*t == NULL) {
         *t = malloc(sizeof(treeNode));
+
+        if (*t == NULL) { 
+            printf("Error: Can't add a node (allocation error)\n");
+            return 0;
+        }
+
         (*t) -> val = val;
         (*t) -> left = NULL;
+        (*t) -> right = NULL;
 
         return 1;
     }
@@ -233,4 +224,25 @@ int getWidthByBFS(tree t) {
     qtree_destroy(q2);
     
     return res;
+}
+
+int checkAVL(tree t, double minH, double maxH) {
+    if (t == NULL)
+        return 0;
+
+    if (t -> val <= minH || t -> val >= maxH)
+        return -1;
+
+    int leftHeight = checkAVL(t -> left, minH, t -> val);
+    if (leftHeight == -1)
+        return -1;
+
+    int rightHeight = checkAVL(t -> right, t -> val, maxH);
+    if (rightHeight == -1)
+        return -1;
+
+    if (abs(leftHeight - rightHeight) > 1)
+        return -1;
+
+    return 1 + max(leftHeight, rightHeight);
 }
