@@ -1,4 +1,3 @@
-#include "insert_sort.h"
 #include "../../../LAB_structs/DIFFICULT_STRUCTS/dbl/queue_dbl.h"
 
 int step_of_a_sort(queue_dbl* q) {
@@ -24,6 +23,8 @@ int step_of_a_sort(queue_dbl* q) {
 
             while (!qdbl_is_empty(storage))
                 qdbl_push(q, qdbl_pop(storage));
+
+            qdbl_destroy(storage);
 
             return 0;
         }
