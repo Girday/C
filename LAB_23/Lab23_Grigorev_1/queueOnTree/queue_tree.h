@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\tree.h"
+#include "../treeStruct/tree.h"
 
 typedef struct {
     tree* buf;

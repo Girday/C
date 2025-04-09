@@ -1,8 +1,7 @@
-#include "tree.h"
+#include "./treeStruct/tree.h"
 #include <stdio.h>
 #include <float.h>
 
-// Функция для очистки буфера ввода
 void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -34,6 +33,10 @@ int main() {
         printf("  4. Check if tree is AVL\n");
         printf("  5. Exit\n");
         printf("Choose an action: ");
+
+
+        /*  ДОБАВИТЬ ОБРАБОТКУ EOF, ЧТОБЫ ДЕЛАТЬ DESTROY(T), ИНАЧЕ БУДЕТ УТЕЧКА ПАМЯТИ */
+
 
         // Проверка корректности ввода для выбора действия
         while (scanf("%d", &choice) != 1 || choice < 1 || choice > 5) {

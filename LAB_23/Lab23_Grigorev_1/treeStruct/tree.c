@@ -1,8 +1,8 @@
 #include "tree.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "./vectorOnInt/vector_int.h"
-#include "./queueOnTree/queue_tree.h"
+#include "../vectorOnInt/vector_int.h"
+#include "../queueOnTree/queue_tree.h"
 
 tree createEmpty() {
     return NULL;
