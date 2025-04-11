@@ -31,25 +31,22 @@ int main() {
         printf("  2. Remove node\n");
         printf("  3. Visualize tree\n");
         printf("  4. Check if tree is AVL\n");
-        printf("  5. Exit\n");
+        printf("  5. Get tree depth\n");
+        printf("  6. Exit\n");
         printf("Choose an action: ");
 
-
-        /*  ДОБАВИТЬ ОБРАБОТКУ EOF, ЧТОБЫ ДЕЛАТЬ DESTROY(T), ИНАЧЕ БУДЕТ УТЕЧКА ПАМЯТИ */
-
-
         // Проверка корректности ввода для выбора действия
-        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 5) {
-            printf("Invalid input. Please enter a number between 1 and 5: ");
-            clearInputBuffer(); // Очищаем буфер ввода
+        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 6) {
+            printf("Invalid input. Please enter a number between 1 and 6: ");
+            clearInputBuffer();
         }
-        clearInputBuffer(); // Очищаем буфер после успешного ввода
+
+        clearInputBuffer();
         printf("\n");
 
         switch (choice) {
             case 1: {
                 printf("Enter value: ");
-                // Проверка корректности ввода для значения узла
                 while (scanf("%lf", &val) != 1) {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
@@ -70,7 +67,6 @@ int main() {
 
             case 2: {
                 printf("Enter value to remove: ");
-                // Проверка корректности ввода для значения узла
                 while (scanf("%lf", &val) != 1) {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
@@ -87,6 +83,7 @@ int main() {
             case 3: {
                 printf("Tree:\n");
                 printTree(t, 0);
+
                 break;
             }
 
@@ -95,12 +92,21 @@ int main() {
                     printf("    The tree is an AVL tree.\n");
                 else 
                     printf("    The tree is NOT an AVL tree.\n");
+                
                 break;
             }
 
             case 5: {
-                destroyRecursive(t);
+                int depth = getDepth(t);
+                printf("Tree depth: %d\n", depth);
+
+                break;
+            }
+
+            case 6: {
+                destroyTree(t);
                 printf("Tree destroyed. Exiting.\n");
+
                 return 0;
             }
         }

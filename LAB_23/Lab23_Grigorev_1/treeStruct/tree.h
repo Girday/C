@@ -16,10 +16,10 @@ double getValue(tree t);
 tree getLeft(tree t);
 tree getRight(tree t);
 void destroy(tree t);
-void destroyRecursive(tree t);
+void destroyTree(tree t);
 
-// tree add(tree t, double val);
 int add(tree *t, double val);
+// tree add(tree t, double val);
 tree removeNode(tree t, double val);
 
 int getDepth(tree t);

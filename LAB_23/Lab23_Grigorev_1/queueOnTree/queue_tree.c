@@ -11,6 +11,7 @@ queue_tree* qtree_create(int max_len) {
     }
 
     res -> buf = malloc(sizeof(tree) * max_len);
+
     if (res -> buf == NULL) {
         fprintf(stderr, "Creating queue of trees failed\n");
         free(res);
@@ -42,9 +43,9 @@ static int grow(queue_tree* qtree) {
 
     if (qtree -> start + qtree -> len > qtree -> max_len) {
         int elements_to_move = (qtree -> start + qtree -> len) % qtree -> max_len;
-        for (int i = 0; i < elements_to_move; i++) {
+        
+        for (int i = 0; i < elements_to_move; i++)
             new_buf[qtree -> max_len + i] = new_buf[i];
-        }
     }
 
     qtree -> buf = new_buf;
@@ -68,7 +69,7 @@ int qtree_push(queue_tree* qtree, tree val) {
 tree qtree_pop(queue_tree* qtree) {
     if (qtree_is_empty(qtree)) {
         fprintf(stderr, "Queue of trees is empty\n");
-        exit(-1);
+        return NULL;
     }
 
     tree elem = qtree -> buf[qtree -> start];

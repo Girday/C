@@ -2,7 +2,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../vectorOnInt/vector_int.h"
+#include "../vectorOnTree/vector_tree.h"
 #include "../queueOnTree/queue_tree.h"
+
+
+                        /* === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ === */
+
+static int maximum(int a, int b) {
+    return a > b ? a : b;
+}
+
+
+                        /* === API === */ 
+
+// Я понимаю, что это всё находится в API - так просто немножко удобнее
 
 tree createEmpty() {
     return NULL;
@@ -57,15 +70,72 @@ void destroy(tree t) {
         free(t);
 }
 
-void destroyRecursive(tree t) {
+
+                        /* === УНИЧТОЖЕНИЕ ВСЕГО ДЕРЕВА === */
+
+/* === Итеративная реализация === */
+
+/*
+
+void destroyTree(tree t) {
+    if (isEmpty(t))
+        return;
+    
+
+    // 1. Реализовать стек на tree 
+    // 2. больше я не придумал (просто while как будто не катит)
+
+}
+
+*/
+
+/* === Рекурсивная реализация === */
+
+void destroyTree(tree t) {
     if (isEmpty(t))
         return;
 
-    destroyRecursive(getLeft(t));
-    destroyRecursive(getRight(t));
+    destroyTree(getLeft(t));
+    destroyTree(getRight(t));
 
     destroy(t);
 }
+
+
+                        /* === ДОБАВЛЕНИЕ УЗЛА === */
+
+/* === Итеративная реализация === */
+
+int add(tree *t, double val) {
+    treeNode **current = t;
+
+    while (*current != NULL) {
+        if (val < (*current) -> val) {
+            current = &(*current) -> left;
+        } else if (val > (*current) -> val) {
+            current = &(*current) -> right;
+        } else {
+            return 0;
+        }
+    }
+    
+    *current = malloc(sizeof(treeNode));
+    
+    if (*current == NULL) {
+        printf("Error: Can't add a node (allocation error)\n");
+        return 0;
+    }
+    
+    (*current) -> val = val;
+    (*current) -> left = NULL;
+    (*current) -> right = NULL;
+    
+    return 1;
+}
+
+
+/*
+    === Рекурсивная реализация ===
 
 int add(tree *t, double val) {
     if (*t == NULL) {
@@ -91,6 +161,64 @@ int add(tree *t, double val) {
 
     return 0;
 }
+
+*/
+
+
+                        /* === УДАЛЕНИЕ УЗЛА === */
+
+/* === Итеративная реализация === */
+
+tree removeNode(tree t, double val) {
+    tree current = t;
+    tree parent = NULL;
+    
+    // Поиск узла и родителя
+    while (current != NULL && current -> val != val) {
+        parent = current;
+        current = (val < current -> val) ? current -> left : current -> right;
+    }
+    
+    if (current == NULL) return t; // Узел не найден
+    
+    // Случай 1: Нет детей или один ребенок
+    if (current -> left == NULL || current -> right == NULL) {
+        tree child = (current -> left != NULL) ? current -> left : current -> right;
+        
+        if (parent == NULL) {
+            free(current);
+            return child;
+        }
+        
+        if (parent -> left == current) parent -> left = child;
+        else parent -> right = child;
+        free(current);
+    }
+    // Случай 2: Два ребенка
+    else {
+        tree successor = current -> right;
+        tree successorParent = current;
+        
+        while (successor -> left != NULL) {
+            successorParent = successor;
+            successor = successor -> left;
+        }
+        
+        current -> val = successor -> val;
+        
+        if (successorParent -> left == successor) 
+            successorParent -> left = successor -> right;
+        else 
+            successorParent -> right = successor -> right;
+        
+        free(successor);
+    }
+    
+    return t;
+}
+
+/*
+    === Рекурсивная реализация ===
 
 tree removeNode(tree t, double val) {
     if (isEmpty(t))
@@ -143,16 +271,32 @@ tree removeNode(tree t, double val) {
     return res;
 }
 
-static int max(int a, int b) {
-    return a > b ? a : b;
-}
+*/
+
+
+                        /* === ГЛУБИНА ДЕРЕВА === */
+
+/* === Итеративная реализация === */
+
+/* === Рекурсивная реализация === */
 
 int getDepth(tree t) {
     if (t == NULL)
         return 0;
     
-    return 1 + max(getDepth(getLeft(t)), getDepth(getRight(t)));
+    return 1 + maximum(getDepth(getLeft(t)), getDepth(getRight(t)));
 }
+
+
+                        /* === ШИРИНА КОНКРЕТНОГО УРОВНЯ === */
+
+/*
+
+1. levelWidth будет итерироваться до определённого уровня
+2. На нужном уровне будет вызывать getWidthByBFS
+3. getWidthByBFS без рекурсии вычисляет ширину поддерева
+
+*/
 
 int levelWidth(tree t, int k) {
     if (k == 0) {
@@ -163,32 +307,6 @@ int levelWidth(tree t, int k) {
     }
 
     return levelWidth(getLeft(t), k - 1) + levelWidth(getRight(t), k - 1);
-}
-
-static void widthsVector(tree t, vector_int* vint, int k) {
-    if (t == NULL)
-        return;
-    
-    if (vint_get_size(vint) < k + 1)
-        vint_set_size(vint, k + 1);
-    
-    vint_set(vint, k, vint_get(vint, k) + 1);
-    widthsVector(getLeft(t), vint, k + 1);
-    widthsVector(getRight(t), vint, k + 1);
-}
-
-int getWidthByVector(tree t) {
-    vector_int* vint = vint_create(0);
-
-    widthsVector(t, vint, 0);
-    int res = 0;
-    
-    for (int i = 0; i < vint_get_size(vint); i++)
-        res = max(res, vint_get(vint, i));
-    
-    vint_destroy(vint);
-
-    return res;
 }
 
 int getWidthByBFS(tree t) {
@@ -203,7 +321,7 @@ int getWidthByBFS(tree t) {
     qtree_push(q1, t);
 
     while (!qtree_is_empty(q1)) {
-        res = max(res, qtree_get_size(q1));
+        res = maximum(res, qtree_get_size(q1));
 
         while (!qtree_is_empty(q1)) {
             tree cur = qtree_pop(q1);
@@ -226,6 +344,13 @@ int getWidthByBFS(tree t) {
     return res;
 }
 
+
+                        /* === ПРОВЕРКА НА СБАЛАНСИРОВАННОСТЬ (AVL) === */
+
+/* === Итеративная реализация === */
+
+/* === Рекурсивная реализация === */
+
 int checkAVL(tree t, double minH, double maxH) {
     if (t == NULL)
         return 0;
@@ -234,15 +359,17 @@ int checkAVL(tree t, double minH, double maxH) {
         return -1;
 
     int leftHeight = checkAVL(t -> left, minH, t -> val);
+
     if (leftHeight == -1)
         return -1;
 
     int rightHeight = checkAVL(t -> right, t -> val, maxH);
+
     if (rightHeight == -1)
         return -1;
 
     if (abs(leftHeight - rightHeight) > 1)
         return -1;
 
-    return 1 + max(leftHeight, rightHeight);
+    return 1 + maximum(leftHeight, rightHeight);
 }
