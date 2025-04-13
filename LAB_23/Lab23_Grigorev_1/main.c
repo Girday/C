@@ -53,7 +53,7 @@ int main() {
                 }
                 clearInputBuffer();
 
-                int result = add(&t, val);
+                int result = addNode(&t, val);
 
                 if (result == 1) 
                     printf("Node %.2f added.\n", val);

@@ -70,6 +70,14 @@ void destroy(tree t) {
         free(t);
 }
 
+void setLeft(tree t, tree left) {
+    t -> left = left;
+}
+
+void setRight(tree t, tree right) {
+    t -> right = right;
+}
+
 
                         /* === УНИЧТОЖЕНИЕ ВСЕГО ДЕРЕВА === */
 
@@ -106,7 +114,7 @@ void destroyTree(tree t) {
 
 /* === Итеративная реализация === */
 
-int add(tree *t, double val) {
+int addNode(tree *t, double val) {
     treeNode **current = t;
 
     while (*current != NULL) {
@@ -134,10 +142,11 @@ int add(tree *t, double val) {
 }
 
 
-/*
-    === Рекурсивная реализация ===
+/*   === Рекурсивная реализация ===   */
 
-int add(tree *t, double val) {
+/*
+
+int addNode(tree *t, double val) {
     if (*t == NULL) {
         *t = malloc(sizeof(treeNode));
 
@@ -154,10 +163,10 @@ int add(tree *t, double val) {
     }
 
     if (val < (*t) -> val) 
-        return add(&(*t) -> left, val);
+        return addNode(&(*t) -> left, val);
     
     if (val > (*t) -> val)
-        return add(&(*t) -> right, val);
+        return addNode(&(*t) -> right, val);
 
     return 0;
 }
@@ -174,42 +183,47 @@ tree removeNode(tree t, double val) {
     tree parent = NULL;
     
     // Поиск узла и родителя
-    while (current != NULL && current -> val != val) {
+    while (current != NULL && getValue(current) != val) {
         parent = current;
-        current = (val < current -> val) ? current -> left : current -> right;
+        current = (val < getValue(current)) ? getLeft(current) : getRight(current);
     }
     
-    if (current == NULL) return t; // Узел не найден
+    if (current == NULL) 
+        return t; // Узел не найден
     
     // Случай 1: Нет детей или один ребенок
-    if (current -> left == NULL || current -> right == NULL) {
-        tree child = (current -> left != NULL) ? current -> left : current -> right;
+    if (getLeft(current) == NULL || getRight(current) == NULL) {
+        tree child = (getLeft(current) != NULL) ? getLeft(current) : getRight(current);
         
         if (parent == NULL) {
             free(current);
             return child;
         }
         
-        if (parent -> left == current) parent -> left = child;
-        else parent -> right = child;
+        if (getLeft(parent) == current) 
+            setLeft(parent, child);
+        else 
+            setRight(parent, child);
+        
         free(current);
     }
+
     // Случай 2: Два ребенка
     else {
-        tree successor = current -> right;
+        tree successor = getRight(current);
         tree successorParent = current;
         
-        while (successor -> left != NULL) {
+        while (getLeft(successor) != NULL) {
             successorParent = successor;
-            successor = successor -> left;
+            successor = getLeft(successor);
         }
         
-        current -> val = successor -> val;
+        current -> val = getValue(successor);
         
-        if (successorParent -> left == successor) 
-            successorParent -> left = successor -> right;
+        if (getLeft(successorParent) == successor) 
+            setLeft(successorParent, getRight(successor));
         else 
-            successorParent -> right = successor -> right;
+            setRight(successorParent, getRight(successor));
         
         free(successor);
     }
@@ -217,8 +231,10 @@ tree removeNode(tree t, double val) {
     return t;
 }
 
+
+/*   === Рекурсивная реализация ===   */
+
 /*
-    === Рекурсивная реализация ===
 
 tree removeNode(tree t, double val) {
     if (isEmpty(t))
