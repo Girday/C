@@ -30,7 +30,7 @@ int isEmpty(tree t) {
 }
 
 double getValue(tree t) {
-    if (t == NULL) {
+    if (isEmpty(t)) {
         printf("Error: Attempt to get value from NULL node.\n");
         return 0.0;
     }
@@ -39,7 +39,7 @@ double getValue(tree t) {
 }
 
 tree getLeft(tree t) {
-    if (t == NULL) {
+    if (isEmpty(t)) {
         printf("Error: Attempt to get left child from NULL node.\n");
         return NULL;
     }
@@ -48,7 +48,7 @@ tree getLeft(tree t) {
 }
 
 tree getRight(tree t) {
-    if (t == NULL) {
+    if (isEmpty(t)) {
         printf("Error: Attempt to get right child from NULL node.\n");
         return NULL;
     }
@@ -59,7 +59,7 @@ tree getRight(tree t) {
 tree build(double val, tree left, tree right) {
     tree res = malloc(sizeof(treeNode));
 
-    if (res == NULL) 
+    if (isEmpty(res)) 
         return NULL;
     
     res -> val = val;
@@ -103,7 +103,7 @@ void destroyTree(tree t) {
         if (!isEmpty(getLeft(cur)))
             stree_push(stree, getLeft(cur));
         
-        free(cur);
+        destroy(cur);
     }
     
     stree_destroy(stree);
@@ -130,7 +130,7 @@ void destroyTree(tree t) {
 int addNode(tree *t, double val) {
     tree* cur = t;
 
-    while (*cur != NULL) {
+    while (!isEmpty(*cur)) {
         if (val < (*cur) -> val)
             cur = &(*cur) -> left;
         else if (val > (*cur) -> val)
@@ -141,7 +141,7 @@ int addNode(tree *t, double val) {
     
     *cur = malloc(sizeof(tree));
     
-    if (*cur == NULL) {
+    if (isEmpty(*cur)) {
         printf("Error: Can't add a node (allocation error)\n");
         return 0;
     }
@@ -191,19 +191,19 @@ tree removeNode(tree t, double val) {
     tree parent = NULL;
     
     // Поиск узла и родителя
-    while (cur != NULL && getValue(cur) != val) {
+    while (!isEmpty(cur) && getValue(cur) != val) {
         parent = cur;
         cur = (val < getValue(cur)) ? getLeft(cur) : getRight(cur);
     }
     
-    if (cur == NULL) 
+    if (isEmpty(cur)) 
         return t; // Узел не найден
     
     // Случай 1: Нет детей или один ребенок
-    if (getLeft(cur) == NULL || getRight(cur) == NULL) {
-        tree child = (getLeft(cur) != NULL) ? getLeft(cur) : getRight(cur);
+    if (isEmpty(getLeft(cur)) || isEmpty(getRight(cur))) {
+        tree child = (!isEmpty(getLeft(cur))) ? getLeft(cur) : getRight(cur);
         
-        if (parent == NULL) {
+        if (isEmpty(parent)) {
             free(cur);
             return child;
         }
@@ -213,7 +213,7 @@ tree removeNode(tree t, double val) {
         else 
             setRight(parent, child);
         
-        free(cur);
+        destroy(cur);
     }
 
     // Случай 2: Два ребенка
@@ -221,7 +221,7 @@ tree removeNode(tree t, double val) {
         tree successor = getRight(cur);
         tree successorParent = cur;
         
-        while (getLeft(successor) != NULL) {
+        while (!isEmpty(getLeft(successor))) {
             successorParent = successor;
             successor = getLeft(successor);
         }
@@ -233,7 +233,7 @@ tree removeNode(tree t, double val) {
         else 
             setRight(successorParent, getRight(successor));
         
-        free(successor);
+        destroy(successor);
     }
     
     return t;
@@ -366,12 +366,11 @@ int levelWidth(tree t, int k) {
         for (int i = 0; i < levelSize; i++) {
             tree node = qtree_pop(q);
             
-            if (!isEmpty(getLeft(node))) {
+            if (!isEmpty(getLeft(node)))
                 qtree_push(q, getLeft(node));
-            }
-            if (!isEmpty(getRight(node))) {
+
+            if (!isEmpty(getRight(node)))
                 qtree_push(q, getRight(node));
-            }
         }
         
         curDepth++;
@@ -442,67 +441,69 @@ int getWidthByBFS(tree t) {
 
 /* === Итеративная реализация === */
 
-int checkAVL(tree t) {
-    if (isEmpty(t)) 
-        return 1;
-    
-    stack_tree* nodes = stree_create(10);
-    stack_int* min_stack = sint_create(10);
-    stack_int* max_stack = sint_create(10);
-    stack_int* height_stack = sint_create(10);
-    
-    stree_push(nodes, t);
-    sint_push(min_stack, INT_MIN);
-    sint_push(max_stack, INT_MAX);
-    sint_push(height_stack, 0);
-    
-    int is_avl = 1;
+// ПОКА РАБОТАЕТ НЕПРАВИЛЬНО
 
-    while (!stree_is_empty(nodes) && is_avl) {
-        tree node = stree_pop(nodes);
-        double min_val = sint_pop(min_stack);
-        double max_val = sint_pop(max_stack);
-        int height = sint_pop(height_stack);
+    int checkAVL(tree t) {
+        if (isEmpty(t)) 
+            return 1;
         
-        // Проверка границ значения
-        if (getValue(node) <= min_val || getValue(node) >= max_val) {
-            is_avl = 0;
-            break;
+        stack_tree* nodes = stree_create(10);
+        stack_int* min_stack = sint_create(10);
+        stack_int* max_stack = sint_create(10);
+        stack_int* height_stack = sint_create(10);
+        
+        stree_push(nodes, t);
+        sint_push(min_stack, INT_MIN);
+        sint_push(max_stack, INT_MAX);
+        sint_push(height_stack, 0);
+        
+        int is_avl = 1;
+
+        while (!stree_is_empty(nodes) && is_avl) {
+            tree node = stree_pop(nodes);
+            double min_val = sint_pop(min_stack);
+            double max_val = sint_pop(max_stack);
+            int height = sint_pop(height_stack);
+            
+            // Проверка границ значения
+            if (getValue(node) <= min_val || getValue(node) >= max_val) {
+                is_avl = 0;
+                break;
+            }
+            
+            int left_height = 0, right_height = 0;
+            int new_height = height + 1;
+            
+            // Обработка правого потомка
+            if (!isEmpty(getRight(node))) {
+                stree_push(nodes, getRight(node));
+                sint_push(min_stack, node->val);
+                sint_push(max_stack, max_val);
+                sint_push(height_stack, new_height);
+                right_height = new_height;
+            }
+            
+            // Обработка левого потомка
+            if (!isEmpty(getLeft(node))) {
+                stree_push(nodes, getLeft(node));
+                sint_push(min_stack, min_val);
+                sint_push(max_stack, node->val);
+                sint_push(height_stack, new_height);
+                left_height = new_height;
+            }
+            
+            // Проверка баланса
+            if (abs(left_height - right_height) > 1)
+                is_avl = 0;
         }
+
+        stree_destroy(nodes);
+        sint_destroy(min_stack);
+        sint_destroy(max_stack);
+        sint_destroy(height_stack);
         
-        int left_height = 0, right_height = 0;
-        int new_height = height + 1;
-        
-        // Обработка правого потомка
-        if (!isEmpty(getRight(node))) {
-            stree_push(nodes, getRight(node));
-            sint_push(min_stack, node->val);
-            sint_push(max_stack, max_val);
-            sint_push(height_stack, new_height);
-            right_height = new_height;
-        }
-        
-        // Обработка левого потомка
-        if (!isEmpty(getLeft(node))) {
-            stree_push(nodes, getLeft(node));
-            sint_push(min_stack, min_val);
-            sint_push(max_stack, node->val);
-            sint_push(height_stack, new_height);
-            left_height = new_height;
-        }
-        
-        // Проверка баланса
-        if (abs(left_height - right_height) > 1)
-            is_avl = 0;
+        return is_avl;
     }
-
-    stree_destroy(nodes);
-    sint_destroy(min_stack);
-    sint_destroy(max_stack);
-    sint_destroy(height_stack);
-    
-    return is_avl;
-}
 
 /* === Рекурсивная реализация === */
 
