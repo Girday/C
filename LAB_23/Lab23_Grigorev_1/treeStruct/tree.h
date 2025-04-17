@@ -29,4 +29,4 @@ int levelWidth(tree t, int k);
 int getWidthByBFS(tree t);
 int getWidthByVector(tree t);
 
-int checkAVL(tree t, double min, double max);
+int checkAVL(tree t);
