@@ -51,6 +51,13 @@ int sint_pop(stack_int* sint) {
 
 }
 
+int sint_top(stack_int* sint) {
+    int res = sint_pop(sint);
+    sint_push(sint, res);
+
+    return res;
+}
+
 static int grow(stack_int* sint) {
 
     int new_max_len = sint -> max_len * 2; // 2 - лютая константа с кайфом

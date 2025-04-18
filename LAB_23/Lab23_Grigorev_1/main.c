@@ -50,10 +50,12 @@ int main() {
         switch (choice) {
             case 1: {
                 printf("Enter value: ");
+
                 while (scanf("%lf", &val) != 1) {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
                 }
+                
                 clearInputBuffer();
 
                 int result = addNode(&t, val);

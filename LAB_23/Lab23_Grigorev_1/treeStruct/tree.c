@@ -443,67 +443,81 @@ int getWidthByBFS(tree t) {
 
 // ПОКА РАБОТАЕТ НЕПРАВИЛЬНО
 
-    int checkAVL(tree t) {
-        if (isEmpty(t)) 
-            return 1;
-        
-        stack_tree* nodes = stree_create(10);
-        stack_int* min_stack = sint_create(10);
-        stack_int* max_stack = sint_create(10);
-        stack_int* height_stack = sint_create(10);
-        
-        stree_push(nodes, t);
-        sint_push(min_stack, INT_MIN);
-        sint_push(max_stack, INT_MAX);
-        sint_push(height_stack, 0);
-        
-        int is_avl = 1;
+int checkAVL(tree t) {
+    if (isEmpty(t)) 
+        return 1;
 
-        while (!stree_is_empty(nodes) && is_avl) {
-            tree node = stree_pop(nodes);
-            double min_val = sint_pop(min_stack);
-            double max_val = sint_pop(max_stack);
-            int height = sint_pop(height_stack);
-            
-            // Проверка границ значения
-            if (getValue(node) <= min_val || getValue(node) >= max_val) {
-                is_avl = 0;
-                break;
-            }
-            
-            int left_height = 0, right_height = 0;
-            int new_height = height + 1;
-            
-            // Обработка правого потомка
-            if (!isEmpty(getRight(node))) {
-                stree_push(nodes, getRight(node));
-                sint_push(min_stack, node->val);
-                sint_push(max_stack, max_val);
-                sint_push(height_stack, new_height);
-                right_height = new_height;
-            }
-            
-            // Обработка левого потомка
+    stack_tree* nodes = stree_create(10);
+    stack_int* min_stack = sint_create(10);
+    stack_int* max_stack = sint_create(10);
+    stack_int* state_stack = sint_create(10); // Для отслеживания состояния обработки узла
+
+    stree_push(nodes, t);
+    sint_push(min_stack, INT_MIN);
+    sint_push(max_stack, INT_MAX);
+    sint_push(state_stack, 0); // 0: узел ещё не обработан
+
+    int is_avl = 1;
+
+    while (!stree_is_empty(nodes) && is_avl) {
+        tree node = stree_top(nodes);
+        int state = sint_top(state_stack);
+        double min_val = sint_top(min_stack);
+        double max_val = sint_top(max_stack);
+
+        // Проверка свойства BST
+        if (getValue(node) <= min_val || getValue(node) >= max_val) {
+            is_avl = 0;
+            break;
+        }
+
+        if (state == 0) {
+            // Первый визит: переходим к левому поддереву
+            sint_pop(state_stack);
+            sint_push(state_stack, 1); // Следующий визит будет вторым
+
             if (!isEmpty(getLeft(node))) {
                 stree_push(nodes, getLeft(node));
                 sint_push(min_stack, min_val);
-                sint_push(max_stack, node->val);
-                sint_push(height_stack, new_height);
-                left_height = new_height;
+                sint_push(max_stack, getValue(node));
+                sint_push(state_stack, 0);
             }
-            
-            // Проверка баланса
-            if (abs(left_height - right_height) > 1)
-                is_avl = 0;
-        }
+        } else if (state == 1) {
+            // Второй визит: левое поддерево обработано, переходим к правому
+            sint_pop(state_stack);
+            sint_push(state_stack, 2); // Следующий визит будет последним
 
-        stree_destroy(nodes);
-        sint_destroy(min_stack);
-        sint_destroy(max_stack);
-        sint_destroy(height_stack);
-        
-        return is_avl;
+            if (!isEmpty(getRight(node))) {
+                stree_push(nodes, getRight(node));
+                sint_push(min_stack, getValue(node));
+                sint_push(max_stack, max_val);
+                sint_push(state_stack, 0);
+            }
+        } else {
+            // Третий визит: оба поддерева обработаны, проверяем баланс
+            stree_pop(nodes);
+            sint_pop(min_stack);
+            sint_pop(max_stack);
+            sint_pop(state_stack);
+
+            // Вычисляем высоты поддеревьев
+            int left_height = getDepth(getLeft(node));
+            int right_height = getDepth(getRight(node));
+
+            // Проверка AVL-свойства: |left_height - right_height| <= 1
+            if (abs(left_height - right_height) > 1) {
+                is_avl = 0;
+            }
+        }
     }
+
+    stree_destroy(nodes);
+    sint_destroy(min_stack);
+    sint_destroy(max_stack);
+    sint_destroy(state_stack);
+
+    return is_avl;
+}
 
 /* === Рекурсивная реализация === */
 

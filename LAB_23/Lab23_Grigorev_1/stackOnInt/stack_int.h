@@ -11,3 +11,4 @@ void sint_destroy(stack_int* sint);
 int sint_is_empty(stack_int* sint);
 int sint_push(stack_int* sint, int val);
 int sint_pop(stack_int* sint);
+int sint_top(stack_int* sint);
