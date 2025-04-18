@@ -1,4 +1,5 @@
-#include "./treeStruct/tree.h"
+#include "treeStruct/tree.h"
+#include "stackOnTree/stack_tree.h"
 #include <stdio.h>
 #include <float.h>
 
@@ -6,6 +7,41 @@ void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
+
+
+                        /* === ПЕЧАТЬ ДЕРЕВА === */
+
+/* === Итеративная реализация === */
+
+// void printTree(tree t) {
+//     stack_tree* stack = stree_create(10);  // Создаем стек
+//     stree_push(stack, t);  // Добавляем корень в стек
+
+//     while (!stree_is_empty(stack)) {
+//         tree current = stree_pop(stack);  // Извлекаем узел
+//         if (current == NULL) 
+//             continue;
+
+//         // Печать текущего узла
+//         int depth = stree_get_size(stack);  // Глубина соответствует текущему размеру стека
+//         for (int i = 0; i < depth; i++) {
+//             printf("    ");
+//         }
+//         printf("%.2f\n", getValue(current));
+
+//         // Сначала правый, затем левый ребёнок
+//         if (!isEmpty(getRight(current))) {
+//             stree_push(stack, getRight(current));
+//         }
+//         if (!isEmpty(getLeft(current))) {
+//             stree_push(stack, getLeft(current));
+//         }
+//     }
+
+//     stree_destroy(stack);  // Освобождаем память
+// }
+
+/* === Рекурсивная реализация === */
 
 void printTree(tree t, int depth) {
     if (t == NULL)

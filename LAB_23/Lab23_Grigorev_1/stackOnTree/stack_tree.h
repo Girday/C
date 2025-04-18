@@ -15,3 +15,4 @@ int stree_push(stack_tree* stree, tree val);
 tree stree_pop(stack_tree* stree);
 int stree_shrink_if_needed(stack_tree* stree);
 tree stree_top(stack_tree* stree);
+int stree_get_size(stack_tree* stree);
