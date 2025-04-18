@@ -190,16 +190,14 @@ tree removeNode(tree t, double val) {
     tree cur = t;
     tree parent = NULL;
     
-    // Поиск узла и родителя
     while (!isEmpty(cur) && getValue(cur) != val) {
         parent = cur;
         cur = (val < getValue(cur)) ? getLeft(cur) : getRight(cur);
     }
     
     if (isEmpty(cur)) 
-        return t; // Узел не найден
+        return t;
     
-    // Случай 1: Нет детей или один ребенок
     if (isEmpty(getLeft(cur)) || isEmpty(getRight(cur))) {
         tree child = (!isEmpty(getLeft(cur))) ? getLeft(cur) : getRight(cur);
         
@@ -216,7 +214,6 @@ tree removeNode(tree t, double val) {
         destroy(cur);
     }
 
-    // Случай 2: Два ребенка
     else {
         tree successor = getRight(cur);
         tree successorParent = cur;
@@ -439,10 +436,6 @@ int getWidthByBFS(tree t) {
 
                         /* === ПРОВЕРКА НА СБАЛАНСИРОВАННОСТЬ (AVL) === */
 
-/* === Итеративная реализация === */
-
-// ПОКА РАБОТАЕТ НЕПРАВИЛЬНО
-
 int checkAVL(tree t) {
     if (isEmpty(t)) 
         return 1;
@@ -450,12 +443,12 @@ int checkAVL(tree t) {
     stack_tree* nodes = stree_create(10);
     stack_int* min_stack = sint_create(10);
     stack_int* max_stack = sint_create(10);
-    stack_int* state_stack = sint_create(10); // Для отслеживания состояния обработки узла
+    stack_int* state_stack = sint_create(10);
 
     stree_push(nodes, t);
     sint_push(min_stack, INT_MIN);
     sint_push(max_stack, INT_MAX);
-    sint_push(state_stack, 0); // 0: узел ещё не обработан
+    sint_push(state_stack, 0);
 
     int is_avl = 1;
 
@@ -465,16 +458,14 @@ int checkAVL(tree t) {
         double min_val = sint_top(min_stack);
         double max_val = sint_top(max_stack);
 
-        // Проверка свойства BST
         if (getValue(node) <= min_val || getValue(node) >= max_val) {
             is_avl = 0;
             break;
         }
 
         if (state == 0) {
-            // Первый визит: переходим к левому поддереву
             sint_pop(state_stack);
-            sint_push(state_stack, 1); // Следующий визит будет вторым
+            sint_push(state_stack, 1);
 
             if (!isEmpty(getLeft(node))) {
                 stree_push(nodes, getLeft(node));
@@ -482,10 +473,11 @@ int checkAVL(tree t) {
                 sint_push(max_stack, getValue(node));
                 sint_push(state_stack, 0);
             }
-        } else if (state == 1) {
-            // Второй визит: левое поддерево обработано, переходим к правому
+        } 
+        
+        else if (state == 1) {
             sint_pop(state_stack);
-            sint_push(state_stack, 2); // Следующий визит будет последним
+            sint_push(state_stack, 2);
 
             if (!isEmpty(getRight(node))) {
                 stree_push(nodes, getRight(node));
@@ -493,21 +485,19 @@ int checkAVL(tree t) {
                 sint_push(max_stack, max_val);
                 sint_push(state_stack, 0);
             }
-        } else {
-            // Третий визит: оба поддерева обработаны, проверяем баланс
+        } 
+        
+        else {
             stree_pop(nodes);
             sint_pop(min_stack);
             sint_pop(max_stack);
             sint_pop(state_stack);
 
-            // Вычисляем высоты поддеревьев
             int left_height = getDepth(getLeft(node));
             int right_height = getDepth(getRight(node));
 
-            // Проверка AVL-свойства: |left_height - right_height| <= 1
-            if (abs(left_height - right_height) > 1) {
+            if (abs(left_height - right_height) > 1)
                 is_avl = 0;
-            }
         }
     }
 
@@ -518,28 +508,3 @@ int checkAVL(tree t) {
 
     return is_avl;
 }
-
-/* === Рекурсивная реализация === */
-
-// int checkAVL(tree t, double minH, double maxH) {
-//     if (t == NULL)
-//         return 0;
-
-//     if (t -> val <= minH || t -> val >= maxH)
-//         return -1;
-
-//     int leftHeight = checkAVL(t -> left, minH, t -> val);
-
-//     if (leftHeight == -1)
-//         return -1;
-
-//     int rightHeight = checkAVL(t -> right, t -> val, maxH);
-
-//     if (rightHeight == -1)
-//         return -1;
-
-//     if (abs(leftHeight - rightHeight) > 1)
-//         return -1;
-
-//     return 1 + maximum(leftHeight, rightHeight);
-// }

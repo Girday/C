@@ -11,14 +11,32 @@ void printTree(tree t, int depth) {
     if (t == NULL)
         return;
 
+    // Отступы для визуализации уровня
     for (int i = 0; i < depth; i++)
-        printf("  ");
+        printf("    ");
 
+    // Печать значения текущего узла
     printf("%.2f\n", getValue(t));
 
-    printTree(getLeft(t), depth + 1);
-    printTree(getRight(t), depth + 1);
+    // Печать правого ребёнка
+    if (!isEmpty(getRight(t))) {
+        for (int i = 0; i < depth + 1; i++)
+            printf("    ");
+
+        printf("R\n");
+        printTree(getRight(t), depth + 1);
+    }
+    
+    // Печать левого ребёнка
+    if (!isEmpty(getLeft(t))) {
+        for (int i = 0; i < depth + 1; i++)
+            printf("    ");
+
+        printf("L\n");
+        printTree(getLeft(t), depth + 1);
+    }
 }
+
 
 int main() {
     tree t = createEmpty();
@@ -76,6 +94,7 @@ int main() {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
                 }
+
                 clearInputBuffer();
 
                 t = removeNode(t, val);
