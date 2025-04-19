@@ -340,6 +340,26 @@ int getDepth(tree t) {
 // }
 
 
+                        /* === ОПРЕДЕЛЕНИЕ УРОВНЯ === */
+
+int getLevel(tree t, double val) {
+    int level = 0;
+    tree cur = t;
+
+    while (!isEmpty(cur)) {
+        if (val == getValue(cur))
+            return level;
+        else if (val < getValue(cur))
+            cur = getLeft(cur);
+        else 
+            cur = getRight(cur);
+        
+        level++;
+    }
+
+    return -1;
+}
+
                         /* === ШИРИНА КОНКРЕТНОГО УРОВНЯ === */
 
 /* === Итеративная реализация === */
