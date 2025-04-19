@@ -104,6 +104,7 @@ tree* getLeftPtr(tree t) {
         printf("Error: Attempt to get left pointer from NULL node.\n");
         return NULL;
     }
+    
     return &(t -> left);
 }
 
@@ -112,6 +113,7 @@ tree* getRightPtr(tree t) {
         printf("Error: Attempt to get right pointer from NULL node.\n");
         return NULL;
     }
+
     return &(t -> right);
 }
 
