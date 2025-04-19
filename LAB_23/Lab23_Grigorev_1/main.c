@@ -1,7 +1,11 @@
-#include "treeStruct/tree.h"
-#include "stackOnTree/stack_tree.h"
 #include <stdio.h>
 #include <float.h>
+
+#include "treeStruct/tree.h"
+#include "stackOnTree/stack_tree.h"
+
+
+                        /* === ОЧИСТКА БУФЕРА ВВОДА === */
 
 void clearInputBuffer() {
     int c;
@@ -11,29 +15,28 @@ void clearInputBuffer() {
 
                         /* === ПЕЧАТЬ ДЕРЕВА === */
 
-/* === Итеративная реализация === */
-
 void printTree(tree t) {
     stack_tree* stack = stree_create(10);
     stree_push(stack, t);
 
     while (!stree_is_empty(stack)) {
         tree current = stree_pop(stack);
+        
         if (current == NULL) 
             continue;
 
         int depth = getLevel(t, getValue(current));
-        for (int i = 0; i < depth; i++) {
+        
+        for (int i = 0; i < depth; i++)
             printf("    ");
-        }
+    
         printf("%.2f\n", getValue(current));
 
-        if (!isEmpty(getRight(current))) {
+        if (!isEmpty(getRight(current)))
             stree_push(stack, getRight(current));
-        }
-        if (!isEmpty(getLeft(current))) {
+    
+        if (!isEmpty(getLeft(current)))
             stree_push(stack, getLeft(current));
-        }
     }
 
     stree_destroy(stack);
@@ -92,6 +95,7 @@ int main() {
 
             case 2: {
                 printf("Enter value to remove: ");
+                
                 while (scanf("%lf", &val) != 1) {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
@@ -136,6 +140,7 @@ int main() {
 
             case 7: {
                 printf("Enter level to check width (from level 0): ");
+                
                 while (scanf("%d", &level) != 1 || level < 0) {
                     printf("Invalid input. Please enter a non-negative integer: ");
                     clearInputBuffer();
@@ -151,6 +156,7 @@ int main() {
 
             case 8: {
                 printf("Enter value to check level: ");
+               
                 while (scanf("%lf", &val) != 1 || val < 0) {
                     printf("Invalid input. Please enter double: ");
                     clearInputBuffer();
@@ -169,7 +175,7 @@ int main() {
             }
 
             case 9: {
-                destroyTree(t);
+                destroyTree(t); 
                 printf("Tree destroyed. Exiting.\n");
 
                 return 0;

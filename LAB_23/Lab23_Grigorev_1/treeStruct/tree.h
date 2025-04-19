@@ -17,8 +17,11 @@ tree getLeft(tree t);
 tree getRight(tree t);
 void destroy(tree t);
 void destroyTree(tree t);
+void setValue(tree t, double val);
 void setLeft(tree t, tree left);
 void setRight(tree t, tree right);
+tree* getLeftPtr(tree t);
+tree* getRightPtr(tree t);
 
 int addNode(tree *t, double val);
 // tree addNode(tree t, double val);
