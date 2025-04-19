@@ -6,8 +6,6 @@
 #include "../queueOnTree/queue_tree.h"
 #include "../stackOnTree/stack_tree.h"
 #include "../stackOnInt/stack_int.h"
-#include "../vectorOnInt/vector_int.h"
-#include "../vectorOnTree/vector_tree.h"
 
 
                         /* === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ === */

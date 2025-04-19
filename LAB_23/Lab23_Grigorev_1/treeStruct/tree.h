@@ -22,12 +22,12 @@ void setRight(tree t, tree right);
 
 int addNode(tree *t, double val);
 // tree addNode(tree t, double val);
+
 tree removeNode(tree t, double val);
 
 int getDepth(tree t);
 int levelWidth(tree t, int k);
 int getWidthByBFS(tree t);
-int getWidthByVector(tree t);
 int getLevel(tree t, double val);
 
 int checkAVL(tree t);
