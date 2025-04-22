@@ -13,9 +13,6 @@ static int maximum(int a, int b) {
     return a > b ? a : b;
 }
 
-static int abs(int a) {
-    return a > 0 ? a : -a;
-}
 
                         /* === API === */ 
 
