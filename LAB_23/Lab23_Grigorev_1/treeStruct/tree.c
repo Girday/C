@@ -6,8 +6,6 @@
 #include "../queueOnTree/queue_tree.h"
 #include "../stackOnTree/stack_tree.h"
 #include "../stackOnInt/stack_int.h"
-#include "../vectorOnInt/vector_int.h"
-#include "../vectorOnTree/vector_tree.h"
 
 
                         /* === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ === */
@@ -59,7 +57,7 @@ tree getRight(tree t) {
 tree build(double val, tree left, tree right) {
     tree res = malloc(sizeof(treeNode));
 
-    if (isEmpty(res)) 
+    if (isEmpty(res))
         return NULL;
     
     res -> val = val;
@@ -74,12 +72,49 @@ void destroy(tree t) {
         free(t);
 }
 
+void setValue(tree t, double val) {
+    if (isEmpty(t)) {
+        printf("Error: Attempt to set value on NULL node.\n");
+        return;
+    }
+
+    t -> val = val;
+}
+
 void setLeft(tree t, tree left) {
+    if (isEmpty(t)) {
+        printf("Error: Attempt to set left on NULL node.\n");
+        return;
+    }
+
     t -> left = left;
 }
 
 void setRight(tree t, tree right) {
+    if (isEmpty(t)) {
+        printf("Error: Attempt to set right on NULL node.\n");
+        return;
+    }
+
     t -> right = right;
+}
+
+tree* getLeftPtr(tree t) {
+    if (isEmpty(t)) {
+        printf("Error: Attempt to get left pointer from NULL node.\n");
+        return NULL;
+    }
+    
+    return &(t -> left);
+}
+
+tree* getRightPtr(tree t) {
+    if (isEmpty(t)) {
+        printf("Error: Attempt to get right pointer from NULL node.\n");
+        return NULL;
+    }
+
+    return &(t -> right);
 }
 
 
@@ -131,28 +166,27 @@ int addNode(tree *t, double val) {
     tree* cur = t;
 
     while (!isEmpty(*cur)) {
-        if (val < (*cur) -> val)
-            cur = &(*cur) -> left;
-        else if (val > (*cur) -> val)
-            cur = &(*cur) -> right;
+        if (val < getValue(*cur))
+            cur = getLeftPtr(*cur);
+        else if (val > getValue(*cur))
+            cur = getRightPtr(*cur);
         else
             return 0;
     }
     
-    *cur = malloc(sizeof(tree));
+    *cur = malloc(sizeof(treeNode));
     
     if (isEmpty(*cur)) {
         printf("Error: Can't add a node (allocation error)\n");
         return 0;
     }
     
-    (*cur) -> val = val;
-    (*cur) -> left = NULL;
-    (*cur) -> right = NULL;
+    setValue(*cur, val);
+    setLeft(*cur, NULL);
+    setRight(*cur, NULL);
     
     return 1;
 }
-
 
 /*   === Рекурсивная реализация ===   */
 
@@ -223,7 +257,7 @@ tree removeNode(tree t, double val) {
             successor = getLeft(successor);
         }
         
-        cur -> val = getValue(successor);
+        setValue(cur, getValue(successor));
         
         if (getLeft(successorParent) == successor) 
             setLeft(successorParent, getRight(successor));
@@ -339,6 +373,26 @@ int getDepth(tree t) {
 //     return 1 + maximum(getDepth(getLeft(t)), getDepth(getRight(t)));
 // }
 
+
+                        /* === ОПРЕДЕЛЕНИЕ УРОВНЯ === */
+
+int getLevel(tree t, double val) {
+    int level = 0;
+    tree cur = t;
+
+    while (!isEmpty(cur)) {
+        if (val == getValue(cur))
+            return level;
+        else if (val < getValue(cur))
+            cur = getLeft(cur);
+        else 
+            cur = getRight(cur);
+        
+        level++;
+    }
+
+    return -1;
+}
 
                         /* === ШИРИНА КОНКРЕТНОГО УРОВНЯ === */
 

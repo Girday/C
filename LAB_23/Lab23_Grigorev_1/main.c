@@ -1,56 +1,84 @@
 #include "treeStruct/tree.h"
-#include "stackOnInt/stack_int.h"
 #include "stackOnTree/stack_tree.h"
 #include <stdio.h>
 #include <float.h>
+
+#include "treeStruct/tree.h"
+#include "stackOnTree/stack_tree.h"
+
+
+                        /* === ОЧИСТКА БУФЕРА ВВОДА === */
 
 void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void printTree(tree t, int d) {
-    stack_tree* stackTree = stree_create(10);
-    stree_push(stackTree, t);
 
-    stack_int* stackDepths = sint_create(10);
-    sint_push(stackDepths, 0);
+                        /* === ПЕЧАТЬ ДЕРЕВА === */
 
-    int treeDepth = getDepth(t);
+/* === Итеративная реализация === */
 
-    while (!stree_is_empty(stackTree)) {
-        tree current = stree_pop(stackTree);
-       
-        if (isEmpty(current)) 
-            continue;
+// void printTree(tree t) {
+//     stack_tree* stack = stree_create(10);  // Создаем стек
+//     stree_push(stack, t);  // Добавляем корень в стек
 
-        int depth = treeDepth - getDepth(current);
-        
-        for (int i = 0; i < depth; i++)
-            printf("  ");
+//     while (!stree_is_empty(stack)) {
+//         tree current = stree_pop(stack);  // Извлекаем узел
+//         if (current == NULL) 
+//             continue;
 
-        if (!depth)
-            printf("%.2f\n", getValue(current));
-        else if (depth > sint_top(stackDepths)) {
-            printf("L-> %.2f\n", getValue(current));
-            sint_push(stackDepths, depth);
-        } 
-        else {
-            printf("R-> %.2f\n", getValue(current));
-            sint_pop(stackDepths);
-        }
+//         // Печать текущего узла
+//         int depth = stree_get_size(stack);  // Глубина соответствует текущему размеру стека
+//         for (int i = 0; i < depth; i++) {
+//             printf("    ");
+//         }
+//         printf("%.2f\n", getValue(current));
 
+//         // Сначала правый, затем левый ребёнок
+//         if (!isEmpty(getRight(current))) {
+//             stree_push(stack, getRight(current));
+//         }
+//         if (!isEmpty(getLeft(current))) {
+//             stree_push(stack, getLeft(current));
+//         }
+//     }
 
-        if (!isEmpty(getRight(current)))
-            stree_push(stackTree, getRight(current));
-        
-        if (!isEmpty(getLeft(current)))
-            stree_push(stackTree, getLeft(current));
+//     stree_destroy(stack);  // Освобождаем память
+// }
+
+/* === Рекурсивная реализация === */
+
+void printTree(tree t, int depth) {
+    if (t == NULL)
+        return;
+
+    // Отступы для визуализации уровня
+    for (int i = 0; i < depth; i++)
+        printf("    ");
+
+    // Печать значения текущего узла
+    printf("%.2f\n", getValue(t));
+
+    // Печать правого ребёнка
+    if (!isEmpty(getRight(t))) {
+        for (int i = 0; i < depth + 1; i++)
+            printf("    ");
+
+        printf("R\n");
+        printTree(getRight(t), depth + 1);
     }
+    
+    // Печать левого ребёнка
+    if (!isEmpty(getLeft(t))) {
+        for (int i = 0; i < depth + 1; i++)
+            printf("    ");
 
-    stree_destroy(stackTree);
-    sint_destroy(stackDepths);
+        printf("L\n");
+        printTree(getLeft(t), depth + 1);
+    }
 }
+
 
 int main() {
     tree t = createEmpty();
@@ -67,12 +95,12 @@ int main() {
         printf("  5. Get tree depth\n");
         printf("  6. Get tree width\n");
         printf("  7. Get width at specific level\n");
-        printf("  8. Exit\n");
+        printf("  8. Get level of value\n");
+        printf("  9. Exit\n");
         printf("Choose an action: ");
 
-        // Проверка корректности ввода для выбора действия
-        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 8) {
-            printf("Invalid input. Please enter a number between 1 and 8: ");
+        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 9) {
+            printf("Invalid input. Please enter a number between 1 and 9: ");
             clearInputBuffer();
         }
 
@@ -104,6 +132,7 @@ int main() {
 
             case 2: {
                 printf("Enter value to remove: ");
+                
                 while (scanf("%lf", &val) != 1) {
                     printf("Invalid input. Please enter a valid number: ");
                     clearInputBuffer();
@@ -120,7 +149,7 @@ int main() {
 
             case 3: {
                 printf("Tree:\n");
-                printTree(t, 0);
+                printTree(t);
                 
                 break;
             }
@@ -148,6 +177,7 @@ int main() {
 
             case 7: {
                 printf("Enter level to check width (from level 0): ");
+                
                 while (scanf("%d", &level) != 1 || level < 0) {
                     printf("Invalid input. Please enter a non-negative integer: ");
                     clearInputBuffer();
@@ -162,7 +192,27 @@ int main() {
             }
 
             case 8: {
-                destroyTree(t);
+                printf("Enter value to check level: ");
+               
+                while (scanf("%lf", &val) != 1 || val < 0) {
+                    printf("Invalid input. Please enter double: ");
+                    clearInputBuffer();
+                }
+
+                clearInputBuffer();
+
+                int levelOfVal = getLevel(t, val);
+                
+                if (levelOfVal == -1)
+                    printf("Value %.2f doesn't exist\n", val);
+                else
+                    printf("Level of value %.2f: %d\n", val, levelOfVal);
+
+                break;
+            }
+
+            case 9: {
+                destroyTree(t); 
                 printf("Tree destroyed. Exiting.\n");
 
                 return 0;
