@@ -1,7 +1,6 @@
 #include "tree.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 
 #include "../queueOnTree/queue_tree.h"
 #include "../stackOnTree/stack_tree.h"
@@ -14,6 +13,9 @@ static int maximum(int a, int b) {
     return a > b ? a : b;
 }
 
+static int abs(int a) {
+    return a > 0 ? a : -a;
+}
 
                         /* === API === */ 
 
@@ -104,7 +106,7 @@ tree* getLeftPtr(tree t) {
         printf("Error: Attempt to get left pointer from NULL node.\n");
         return NULL;
     }
-    
+
     return &(t -> left);
 }
 
@@ -178,7 +180,7 @@ int addNode(tree *t, double val) {
     
     if (isEmpty(*cur)) {
         printf("Error: Can't add a node (allocation error)\n");
-        return 0;
+        return -1;
     }
     
     setValue(*cur, val);
