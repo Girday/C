@@ -1,5 +1,3 @@
-#include "treeStruct/tree.h"
-#include "stackOnTree/stack_tree.h"
 #include <stdio.h>
 #include <float.h>
 
@@ -17,66 +15,31 @@ void clearInputBuffer() {
 
                         /* === ПЕЧАТЬ ДЕРЕВА === */
 
-/* === Итеративная реализация === */
+void printTree(tree t) {
+    stack_tree* stack = stree_create(10);
+    stree_push(stack, t);
 
-// void printTree(tree t) {
-//     stack_tree* stack = stree_create(10);  // Создаем стек
-//     stree_push(stack, t);  // Добавляем корень в стек
+    while (!stree_is_empty(stack)) {
+        tree current = stree_pop(stack);
+        
+        if (current == NULL) 
+            continue;
 
-//     while (!stree_is_empty(stack)) {
-//         tree current = stree_pop(stack);  // Извлекаем узел
-//         if (current == NULL) 
-//             continue;
-
-//         // Печать текущего узла
-//         int depth = stree_get_size(stack);  // Глубина соответствует текущему размеру стека
-//         for (int i = 0; i < depth; i++) {
-//             printf("    ");
-//         }
-//         printf("%.2f\n", getValue(current));
-
-//         // Сначала правый, затем левый ребёнок
-//         if (!isEmpty(getRight(current))) {
-//             stree_push(stack, getRight(current));
-//         }
-//         if (!isEmpty(getLeft(current))) {
-//             stree_push(stack, getLeft(current));
-//         }
-//     }
-
-//     stree_destroy(stack);  // Освобождаем память
-// }
-
-/* === Рекурсивная реализация === */
-
-void printTree(tree t, int depth) {
-    if (t == NULL)
-        return;
-
-    // Отступы для визуализации уровня
-    for (int i = 0; i < depth; i++)
-        printf("    ");
-
-    // Печать значения текущего узла
-    printf("%.2f\n", getValue(t));
-
-    // Печать правого ребёнка
-    if (!isEmpty(getRight(t))) {
-        for (int i = 0; i < depth + 1; i++)
+        int depth = getLevel(t, getValue(current));
+        
+        for (int i = 0; i < depth; i++)
             printf("    ");
-
-        printf("R\n");
-        printTree(getRight(t), depth + 1);
-    }
     
-    // Печать левого ребёнка
-    if (!isEmpty(getLeft(t))) {
-        for (int i = 0; i < depth + 1; i++)
-            printf("    ");
+        printf("%.2f\n", getValue(current));
 
-        printf("L\n");
-        printTree(getLeft(t), depth + 1);
+        if (!isEmpty(getRight(current)))
+            stree_push(stack, getRight(current));
+    
+        if (!isEmpty(getLeft(current)))
+            stree_push(stack, getLeft(current));
     }
+
+    stree_destroy(stack);
 }
 
 
