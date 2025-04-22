@@ -7,7 +7,7 @@
 
                         /* === ОЧИСТКА БУФЕРА ВВОДА === */
 
-void clearInputBuffer() {
+static void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
@@ -15,7 +15,7 @@ void clearInputBuffer() {
 
                         /* === ПЕЧАТЬ ДЕРЕВА === */
 
-void printTree(tree t) {
+static void printTree(tree t) {
     stack_tree* stack = stree_create(10);
     stree_push(stack, t);
 
@@ -62,21 +62,69 @@ int main() {
         printf("  9. Exit\n");
         printf("Choose an action: ");
 
-        while (scanf("%d", &choice) != 1 || choice < 1 || choice > 9) {
-            printf("Invalid input. Please enter a number between 1 and 9: ");
-            clearInputBuffer();
+        int scan_result;
+        int valid_input = 0;
+
+        while (!valid_input) {
+            scan_result = scanf("%d", &choice);
+
+            if (scan_result == EOF) {
+                printf("\nEOF detected. Exiting.\n");
+                destroyTree(t);
+                return 0;
+            }
+
+            if (scan_result != 1 || choice < 1 || choice > 9) {
+                printf("Invalid input. Please enter a number between 1 and 9: ");
+                clearInputBuffer();
+                continue;
+            }
+
+            int next_char = getchar();
+            int has_non_space = 0;
+
+            while (next_char == ' ') 
+                next_char = getchar();
+            
+            if (next_char != '\n' && next_char != EOF)
+                has_non_space = 1;
+
+            if (has_non_space) {
+                printf("Invalid input. Please enter a number between 1 and 9: ");
+                clearInputBuffer();
+
+                continue;
+            }
+
+            if (next_char == EOF) {
+                printf("\nEOF detected. Exiting.\n");
+                destroyTree(t);
+
+                return 0;
+            }
+
+            valid_input = 1;
         }
 
-        clearInputBuffer();
         printf("\n");
 
         switch (choice) {
             case 1: {
                 printf("Enter value: ");
+                int val_scan_result = scanf("%lf", &val);
 
-                while (scanf("%lf", &val) != 1) {
-                    printf("Invalid input. Please enter a valid number: ");
+                if (val_scan_result == EOF) {
+                    printf("\nEOF detected. Exiting.\n");
+                    destroyTree(t);
+
+                    return 0;
+                }
+
+                if (val_scan_result != 1) {
+                    printf("Invalid input. Please enter a valid number.\n");
                     clearInputBuffer();
+
+                    break;
                 }
                 
                 clearInputBuffer();
@@ -95,10 +143,20 @@ int main() {
 
             case 2: {
                 printf("Enter value to remove: ");
-                
-                while (scanf("%lf", &val) != 1) {
-                    printf("Invalid input. Please enter a valid number: ");
+                int val_scan_result = scanf("%lf", &val);
+
+                if (val_scan_result == EOF) {
+                    printf("\nEOF detected. Exiting.\n");
+                    destroyTree(t);
+
+                    return 0;
+                }
+
+                if (val_scan_result != 1) {
+                    printf("Invalid input. Please enter a valid number.\n");
                     clearInputBuffer();
+
+                    break;
                 }
 
                 clearInputBuffer();
@@ -129,21 +187,33 @@ int main() {
             case 5: {
                 int depth = getDepth(t);
                 printf("Tree depth: %d\n", depth);
+
                 break;
             }
 
             case 6: {
                 int width = getWidthByBFS(t);
                 printf("Tree width: %d\n", width);
+
                 break;
             }
 
             case 7: {
                 printf("Enter level to check width (from level 0): ");
-                
-                while (scanf("%d", &level) != 1 || level < 0) {
-                    printf("Invalid input. Please enter a non-negative integer: ");
+                int level_scan_result = scanf("%d", &level);
+
+                if (level_scan_result == EOF) {
+                    printf("\nEOF detected. Exiting.\n");
+                    destroyTree(t);
+
+                    return 0;
+                }
+
+                if (level_scan_result != 1 || level < 0) {
+                    printf("Invalid input. Please enter a non-negative integer.\n");
                     clearInputBuffer();
+
+                    break;
                 }
 
                 clearInputBuffer();
@@ -156,10 +226,19 @@ int main() {
 
             case 8: {
                 printf("Enter value to check level: ");
-               
-                while (scanf("%lf", &val) != 1 || val < 0) {
-                    printf("Invalid input. Please enter double: ");
+                int val_scan_result = scanf("%lf", &val);
+
+                if (val_scan_result == EOF) {
+                    printf("\nEOF detected. Exiting.\n");
+                    destroyTree(t);
+
+                    return 0;
+                }
+                if (val_scan_result != 1 || val < 0) {
+                    printf("Invalid input. Please enter double.\n");
                     clearInputBuffer();
+
+                    break;
                 }
 
                 clearInputBuffer();
@@ -170,14 +249,13 @@ int main() {
                     printf("Value %.2f doesn't exist\n", val);
                 else
                     printf("Level of value %.2f: %d\n", val, levelOfVal);
-
                 break;
             }
 
             case 9: {
                 destroyTree(t); 
                 printf("Tree destroyed. Exiting.\n");
-
+                
                 return 0;
             }
         }
