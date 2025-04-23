@@ -8,6 +8,9 @@
         "queue_tree.h": "c",
         "queue_lex.h": "c",
         "stack_lex.h": "c",
-        "tree.h": "c"
+        "tree.h": "c",
+        "algorithm": "c",
+        "limits": "c",
+        "utility": "c"
     }
 }
