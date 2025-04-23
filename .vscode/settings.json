@@ -5,6 +5,9 @@
         "insert_sort.h": "c",
         "vector_int.h": "c",
         "main.h": "c",
-        "queue_tree.h": "c"
+        "queue_tree.h": "c",
+        "queue_lex.h": "c",
+        "stack_lex.h": "c",
+        "tree.h": "c"
     }
 }

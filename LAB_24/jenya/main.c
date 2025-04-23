@@ -30,7 +30,7 @@ static int is_p_right(char c) {
 }
 
 static int is_right_assoc(char c) {
-    return c == '^' || c == '~' || c == '!';
+    return c == '^' || c == '~';
 }
 
 static int op_priority(char op) {
@@ -235,18 +235,30 @@ tree_result convertToTree(queue_lex* q) {
         }
 
         if (is_op(token)) {
-            if (token == '~' || token == '!') {
+            if (token == '~') {
                 if (stree_is_empty(stack)) {
                     result.error = (ErrorInfo){
                         ERROR_STACK_UNDERFLOW, 
-                        token == '~' ? "Missing operand for ~" : "Missing operand for !", 
+                        "Missing operand for ~", 
                         pos
                     };
                     destroyTree(node);
                     stree_destroy(stack);
                     return result;
                 }
-                node->right = stree_pop_back(stack);
+                node = build(getValue(node), getLeft(node), stree_pop_back(stack));
+            } else if (token == '!') {
+                if (stree_is_empty(stack)) {
+                    result.error = (ErrorInfo){
+                        ERROR_STACK_UNDERFLOW, 
+                        "Missing operand for !", 
+                        pos
+                    };
+                    destroyTree(node);
+                    stree_destroy(stack);
+                    return result;
+                }
+                node = build(getValue(node), stree_pop_back(stack), getRight(node));
             } else {
                 if (stree_is_empty(stack)) {
                     result.error = (ErrorInfo){ERROR_STACK_UNDERFLOW, "Missing right operand", pos};
@@ -254,7 +266,7 @@ tree_result convertToTree(queue_lex* q) {
                     stree_destroy(stack);
                     return result;
                 }
-                node->right = stree_pop_back(stack);
+                node = build(getValue(node), getLeft(node), stree_pop_back(stack));
                 
                 if (stree_is_empty(stack)) {
                     result.error = (ErrorInfo){ERROR_STACK_UNDERFLOW, "Missing left operand", pos};
@@ -263,7 +275,7 @@ tree_result convertToTree(queue_lex* q) {
                     stree_destroy(stack);
                     return result;
                 }
-                node->left = stree_pop_back(stack);
+                node = build(getValue(node), stree_pop_back(stack), getRight(node));
             }
         }
 
