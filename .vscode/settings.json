@@ -11,6 +11,7 @@
         "tree.h": "c",
         "algorithm": "c",
         "limits": "c",
-        "utility": "c"
+        "utility": "c",
+        "stdlib.h": "c"
     }
 }

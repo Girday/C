@@ -1,10 +1,8 @@
 #pragma once
 
-#include "../token/token.h"
-
 typedef struct treeNode treeNode;
 struct treeNode {
-    Token token;    // Токен вместо char
+    char val;
     treeNode *left;
     treeNode *right;
 };
@@ -12,13 +10,23 @@ struct treeNode {
 typedef treeNode *tree;
 
 tree createEmpty();
-tree build(Token token, tree left, tree right);
+tree build(char val, tree left, tree right);
 int isEmpty(tree t);
-Token getValue(tree t);
+char getValue(tree t);
 tree getLeft(tree t);
 tree getRight(tree t);
 void destroyTree(tree t);
 
-// Остальные функции остаются, но обновляются для работы с Token
+tree add(tree t, char val);
+int addNew(tree* t, char val);
+tree removeNode(tree t, char val);
+
+int getDepth(tree t);
+int levelWidth(tree t, int target);
+int getWidth(tree t);
+int getWidthVector(tree t);
+int getWidthBFS(tree t);
+
 void printTreePretty(tree t, int level);
+
 void deleteUnitMultiply(tree* t);
