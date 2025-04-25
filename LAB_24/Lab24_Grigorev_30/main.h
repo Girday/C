@@ -1,8 +1,8 @@
 #pragma once
 
-#include "queue_lex/queue_lex.h"
-#include "stack_lex/stack_lex.h"
-#include "stack_tree/stack_tree.h"
+#include "queueOnLex/queue_lex.h"
+#include "stackOnLex/stack_lex.h"
+#include "stackOnTree/stack_tree.h"
 #include "binaryTree/tree.h"
 
 typedef enum {

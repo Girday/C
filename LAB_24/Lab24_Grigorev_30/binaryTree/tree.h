@@ -4,12 +4,12 @@
 
 typedef struct treeNode treeNode;
 struct treeNode {
-    Token token;    // Токен вместо char
+    Token token;
     treeNode *left;
     treeNode *right;
 };
 
-typedef treeNode *tree;
+typedef treeNode* tree;
 
 tree createEmpty();
 tree build(Token token, tree left, tree right);
@@ -19,6 +19,7 @@ tree getLeft(tree t);
 tree getRight(tree t);
 void destroyTree(tree t);
 
-// Остальные функции остаются, но обновляются для работы с Token
+void applyReorder(tree* t);
+
 void printTreePretty(tree t, int level);
 void deleteUnitMultiply(tree* t);

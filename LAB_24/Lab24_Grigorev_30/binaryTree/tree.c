@@ -3,9 +3,10 @@
 #include <string.h>
 
 #include "tree.h"
-#include "../vector_int/vector_int.h"
-#include "../queue_tree/queue_tree.h"
-#include "../stack_tree/stack_tree.h"
+#include "../vectorOnInt/vector_int.h"
+#include "../queueOnTree/queue_tree.h"
+#include "../stackOnTree/stack_tree.h"
+#include "../vectorOnTree/vector_tree.h"
 
 tree createEmpty() {
     return NULL;
@@ -33,7 +34,7 @@ tree build(Token token, tree left, tree right) {
     if (res == NULL) 
         return NULL;
     
-    res -> token = token; // Копируем токен
+    res -> token = token;
     res -> left = left;
     res -> right = right;
     
@@ -61,7 +62,7 @@ void destroyTree(tree t) {
         if (getRight(cur) != NULL) 
             qtree_push_back(q, getRight(cur));
     
-        free(cur->token.value); // Освобождаем строку токена
+        free(cur -> token.value);
         free(cur);
     }
 
@@ -77,7 +78,7 @@ void printTreePretty(tree t, int level) {
     for (int i = 0; i < level; i++) 
         printf("    ");
     
-    printf("%s\n", getValue(t).value); // Печатаем строковое значение
+    printf("%s\n", getValue(t).value);
     printTreePretty(getLeft(t), level + 1);
 }
 
@@ -106,4 +107,69 @@ void deleteUnitMultiply(tree* t) {
             free(tmp);
         }
     }
+}
+
+static void collectOperands(tree t, TokenType opType, vector_tree* operands) {
+    if (isEmpty(t)) 
+        return;
+    
+    if (t -> token.type == TOK_OP && strcmp(t -> token.value, opType == TOK_OP ? "+" : "*") == 0) {
+        collectOperands(t -> left, opType, operands);
+        collectOperands(t -> right, opType, operands);
+    } 
+    else
+        vtree_push_back(operands, t);
+}
+
+static tree reorderOperands(tree t) {
+    if (isEmpty(t) || t -> token.type != TOK_OP) 
+        return t;
+
+    char* op = t -> token.value;
+    
+    if (strcmp(op, "+") != 0 && strcmp(op, "*") != 0) 
+        return t;
+
+    vector_tree* operands = vtree_create(10);
+    collectOperands(t, t -> token.type, operands);
+
+    vector_tree* constants = vtree_create(10);
+    vector_tree* variables = vtree_create(10);
+    
+    for (int i = 0; i < vtree_get_size(operands); i++) {
+        tree node = vtree_get(operands, i);
+        
+        if (node -> token.type == TOK_CONST)
+            vtree_push_back(constants, node); 
+        else
+            vtree_push_back(variables, node);
+    }
+
+    tree newTree = NULL;
+
+    for (int i = 0; i < vtree_get_size(constants); i++) {
+        tree node = vtree_get(constants, i);
+        newTree = newTree ? build(t->token, newTree, node) : node;
+    }
+
+    for (int i = 0; i < vtree_get_size(variables); i++) {
+        tree node = vtree_get(variables, i);
+        newTree = newTree ? build(t->token, newTree, node) : node;
+    }
+
+    vtree_destroy(operands);
+    vtree_destroy(constants);
+    vtree_destroy(variables);
+    
+    return newTree;
+}
+
+void applyReorder(tree* t) {
+    if (isEmpty(*t)) 
+        return;
+    
+    *t = reorderOperands(*t);
+    
+    applyReorder(&(*t) -> left);
+    applyReorder(&(*t) -> right);
 }

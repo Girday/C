@@ -6,38 +6,33 @@
 #include "main.h"
 #include "token/token.h"
 
-/* ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ОПЕРАТОРОВ ================== */
 
-// Проверяет, является ли символ оператором (исключая 'e' для научной нотации)
 static int is_op_char(char c) {
     return strchr("+-*/^!~", c) != NULL && c != 'e' && c != 'E';
 }
 
-// Проверяет правоассоциативность оператора
 static int is_right_assoc(Token token) {
-    return token.value[0] == '^' || token.value[0] == '~' || token.value[0] == '!';
+    return token.value[0] == '^' || token.value[0] == '~';
 }
 
-// Возвращает приоритет оператора для обработки порядка операций
 static int op_priority(Token token) {
     switch (token.value[0]) {
         case '!': 
         case '~': 
-            return 4; // Наивысший приоритет (унарные операторы)
+            return 4;
         case '^':           
-            return 3; // Возведение в степень
+            return 3;
         case '*': 
         case '/': 
-            return 2; // Умножение/деление
+            return 2;
         case '+': 
         case '-': 
-            return 1; // Сложение/вычитание
+            return 1;
         default:           
-            return 0;  // Остальные случаи
+            return 0;
     }
 }
 
-// Определяет, должен ли текущий оператор вытеснить оператор из стека
 static int should_displace(Token lex, Token target) {
     if (target.type == TOK_PAREN && target.value[0] == '(') 
         return 0;
@@ -45,18 +40,15 @@ static int should_displace(Token lex, Token target) {
     int lex_prio = op_priority(lex);
     int target_prio = op_priority(target);
     
-    return is_right_assoc(lex) ? target_prio > lex_prio : target_prio >= lex_prio;
+    return is_right_assoc(lex) || lex.value[0] == '!' ? target_prio > lex_prio : target_prio >= lex_prio;
 }
 
-/* ================== ОСНОВНЫЕ ФУНКЦИИ ОБРАБОТКИ ================== */
-
-// Функция чтения и токенизации входного выражения
 read_result readline(queue_lex* out) {
     read_result result = {out, {RESULT_OK, "Success", -1}};
     char buffer[256];
     int buffer_pos = 0;
     int pos = 0;
-    int prev_type = -1; // -1 означает начало выражения
+    int prev_type = -1;
     int c = getchar();
 
     if (out == NULL) {
@@ -74,7 +66,6 @@ read_result readline(queue_lex* out) {
 
         buffer_pos = 0;
 
-        // Запрещаем операторы в начале (кроме унарного минуса)
         if (prev_type == -1 && is_op_char(c) && c != '-') {
             buffer[0] = c;
             buffer[1] = '\0';
@@ -86,7 +77,6 @@ read_result readline(queue_lex* out) {
             return result;
         }
 
-        // Обработка числовых констант (целые, вещественные, hex, binary)
         if (isdigit(c) || (c == '.' && (c = getchar(), isdigit(c)))) {
             ungetc(c, stdin);
             
@@ -194,7 +184,6 @@ read_result readline(queue_lex* out) {
             continue;
         }
 
-        // Обработка идентификаторов (переменных)
         if (isalpha(c) || c == '_') {
             while (isalnum(c) || c == '_') {
                 buffer[buffer_pos++] = c;
@@ -218,7 +207,6 @@ read_result readline(queue_lex* out) {
             continue;
         }
 
-        // Обработка операторов и скобок
         if (is_op_char(c) || c == '(' || c == ')') {
             buffer[0] = c;
             buffer[1] = '\0';
@@ -229,13 +217,13 @@ read_result readline(queue_lex* out) {
             
             else if (c == '-' && (prev_type == -1 || prev_type == TOK_OP || 
                                   prev_type == TOK_UNARY_OP || prev_type == TOK_PAREN))
-                token = (Token){strdup("~"), TOK_UNARY_OP}; // Унарный минус
+                token = (Token){strdup("~"), TOK_UNARY_OP};
             
             else if (c == '!') 
-                token = (Token){strdup(buffer), TOK_UNARY_OP}; // Факториал
+                token = (Token){strdup(buffer), TOK_UNARY_OP};
             
             else 
-                token = (Token){strdup(buffer), TOK_OP}; // Бинарные операторы
+                token = (Token){strdup(buffer), TOK_OP};
             
             
             if (!qlex_push_back(out, token)) {
@@ -252,13 +240,11 @@ read_result readline(queue_lex* out) {
             continue;
         }
 
-        // Недопустимый знак
         result.error = (ErrorInfo){ERROR_INVALID_SYMBOL, "Invalid character in input", pos};
         
         return result;
     }
 
-    // Проверка окончания на оператор (разрешен только факториал)
     if (pos > 0 && prev_type == TOK_OP) {
         Token last_token = qlex_top(out);
 
@@ -275,7 +261,6 @@ read_result readline(queue_lex* out) {
     return result;
 }
 
-// Преобразование инфиксной записи в постфиксную (ОПН)
 postfix_result convertToPostfix(queue_lex* q, queue_lex* out) {
     postfix_result result = {out, {RESULT_OK, "Success", -1}};
     
@@ -332,6 +317,7 @@ postfix_result convertToPostfix(queue_lex* q, queue_lex* out) {
             }
 
             Token open_paren = slex_pop_back(s);
+
             free(open_paren.value);
             free(lex.value);
         } 
@@ -390,7 +376,6 @@ postfix_result convertToPostfix(queue_lex* q, queue_lex* out) {
     return result;
 }
 
-// Построение дерева выражения из постфиксной записи
 tree_result convertToTree(queue_lex* q) {
     tree_result result = {NULL, {RESULT_OK, "Success", -1}};
     
@@ -516,7 +501,6 @@ int needsParentheses(Token parent, Token child, int isLeftChild) {
     return 0;
 }
 
-// Рекурсивно строит строку из дерева выражения
 void buildInfixString(tree t, Token parent, int isLeftChild, char** buffer, int* size) {
     if (isEmpty(t)) 
         return;
@@ -556,7 +540,6 @@ void buildInfixString(tree t, Token parent, int isLeftChild, char** buffer, int*
     }
 }
 
-// Преобразует дерево обратно в инфиксную запись
 char* treeToInfix(tree t) {
     if (isEmpty(t)) 
         return strdup("");
@@ -594,7 +577,7 @@ char* treeToInfix(tree t) {
 void print_error(const ErrorInfo* error) {
     const char* error_type = "";
     
-    switch (error->code) {
+    switch (error -> code) {
         case ERROR_EMPTY_INPUT:       
             error_type = "Empty input"; 
             break;
@@ -621,24 +604,23 @@ void print_error(const ErrorInfo* error) {
             break;
     }
     
-    if (error->position >= 0) 
+    if (error -> position >= 0) 
         fprintf(stderr, "Error [%s] at position %d: %s\n", 
-                error_type, error->position, error->message);
+                error_type, error -> position, error -> message);
     else 
-        fprintf(stderr, "Error [%s]: %s\n", error_type, error->message);
+        fprintf(stderr, "Error [%s]: %s\n", error_type, error -> message);
 }
 
-// Печатает содержимое очереди токенов
 void print_queue(queue_lex* q) {
     if (q == NULL) 
         return;
     
-    int i = q->start;
+    int i = q -> start;
     int count = 0;
     
-    while (count < q->len) {
-        printf("%s ", q->buf[i].value);
-        i = (i + 1) % q->max_len;
+    while (count < q -> len) {
+        printf("%s ", q -> buf[i].value);
+        i = (i + 1) % q -> max_len;
         count++;
     }
 }
@@ -655,7 +637,7 @@ int main() {
     }
 
     // 2. Чтение и токенизация выражения
-    printf("Enter expression: ");
+    printf("\nEnter expression: ");
     read_result read_res = readline(input_queue);
    
     if (read_res.error.code != RESULT_OK) {
@@ -666,7 +648,7 @@ int main() {
     }
 
     // 3. Вывод токенизированного выражения
-    printf("Input expression: ");
+    printf("\nInput expression: ");
     print_queue(input_queue);
     printf("\n");
 
@@ -707,20 +689,20 @@ int main() {
     }
 
     // 7. Вывод дерева выражения
-    printf("Expression tree:\n");
+    printf("\nExpression tree:\n");
     printTreePretty(tree_res.root, 0);
-    printf("\n");
 
-    // 8. Упрощение дерева (удаление умножений на 1)
+    // 8. Упрощение дерева
     deleteUnitMultiply(&tree_res.root);
-    printf("Simplified tree:\n");
+    applyReorder(&tree_res.root); // <-- Новое преобразование
+    printf("\nReordered tree:\n");
     printTreePretty(tree_res.root, 0);
 
     // 9. Преобразование дерева обратно в инфиксную запись
     char* infix = treeToInfix(tree_res.root);
     
     if (infix) {
-        printf("Infix expression: %s\n", infix);
+        printf("\nInfix expression: %s\n", infix);
         free(infix);
     }
 
