@@ -44,7 +44,7 @@ void qlex_destroy(queue_lex* qlex) {
         return;
     
     for (int i = 0; i < qlex -> len; i++)
-        free(qlex -> buf[(qlex -> start + i) % qlex -> max_len].value); // Освобождаем строки
+        free(qlex -> buf[(qlex -> start + i) % qlex -> max_len].value);
     
     free(qlex -> buf);
     free(qlex);

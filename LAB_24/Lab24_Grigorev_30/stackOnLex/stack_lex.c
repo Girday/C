@@ -9,7 +9,7 @@ stack_lex* slex_create(int max_len) {
         return NULL;
  
     res -> max_len = max_len;
-    res -> buf = malloc(sizeof(Token) * max_len); // Изменено char на Token
+    res -> buf = malloc(sizeof(Token) * max_len);
     
     if (res -> buf == NULL) {
         free(res);
@@ -23,7 +23,7 @@ stack_lex* slex_create(int max_len) {
 
 static int grow(stack_lex* slex) {
     int new_max_len = slex -> max_len * 2;
-    Token* new_buf = realloc(slex -> buf, sizeof(Token) * new_max_len); // Изменено char на Token
+    Token* new_buf = realloc(slex -> buf, sizeof(Token) * new_max_len);
     
     if (new_buf == NULL) 
         return 0;
@@ -39,7 +39,7 @@ void slex_destroy(stack_lex* slex) {
         return;
     
     for (int i = 0; i < slex -> len; i++)
-        free(slex -> buf[i].value); // Освобождаем строки токенов
+        free(slex -> buf[i].value);
     
     free(slex -> buf);
     free(slex);

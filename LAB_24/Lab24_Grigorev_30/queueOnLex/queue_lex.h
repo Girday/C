@@ -1,8 +1,9 @@
 #pragma once
+
 #include "../token/token.h"
 
 typedef struct {
-    Token* buf;     // Буфер для токенов
+    Token* buf;
     int max_len;
     int len;
     int start;
