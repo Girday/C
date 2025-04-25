@@ -3,5 +3,5 @@ cd LAB_24/Lab24_Grigorev_30
 ```
 
 ```bash
-gcc binaryTree/tree.c stack_lex/stack_lex.c vector_int/vector_int.c queue_lex/queue_lex.c stack_tree/stack_tree.c queue_tree/queue_tree.c vectorOnTree/vector_tree.c main.c; ./a
+gcc binaryTree/tree.c stackOnLex/stack_lex.c vectorOnInt/vector_int.c queueOnLex/queue_lex.c stackOnTree/stack_tree.c queueOnTree/queue_tree.c vectorOnTree/vector_tree.c main.c;
 ```
