@@ -7,6 +7,19 @@
 #include "token/token.h"
 
 
+static ErrorCode getErrCode(ErrorInfo* error) {
+    return error -> code;
+}
+
+static int getErrPos(ErrorInfo* error) {
+    return error -> position;
+}
+
+static const char* getErrMes(ErrorInfo* error) {
+    return error -> message;
+}
+
+
 static int is_op_char(char c) {
     return strchr("+-*/^!~", c) != NULL && c != 'e' && c != 'E';
 }
@@ -49,6 +62,7 @@ read_result readline(queue_lex* out) {
     int buffer_pos = 0;
     int pos = 0;
     int prev_type = -1;
+    char last_paren_type = '\0';
     int c = getchar();
 
     if (out == NULL) {
@@ -212,13 +226,21 @@ read_result readline(queue_lex* out) {
             buffer[1] = '\0';
             Token token;
             
-            if (c == '(' || c == ')') 
+            if (c == '-') {
+                int next_c = getchar();
+                ungetc(next_c, stdin);
+
+                if (prev_type == -1 || prev_type == TOK_OP || prev_type == TOK_UNARY_OP ||
+                   (prev_type == TOK_PAREN && last_paren_type == '(' && 
+                   (next_c == '(' || isalpha(next_c) || isdigit(next_c))))
+                    token = (Token){strdup("~"), TOK_UNARY_OP};
+                else
+                    token = (Token){strdup(buffer), TOK_OP};
+            }
+            else if (c == '(' || c == ')') {
                 token = (Token){strdup(buffer), TOK_PAREN};
-            
-            else if (c == '-' && (prev_type == -1 || prev_type == TOK_OP || 
-                                  prev_type == TOK_UNARY_OP || prev_type == TOK_PAREN))
-                token = (Token){strdup("~"), TOK_UNARY_OP};
-            
+                last_paren_type = c;
+            }
             else if (c == '!') 
                 token = (Token){strdup(buffer), TOK_UNARY_OP};
             
@@ -440,7 +462,7 @@ tree_result convertToTree(queue_lex* q) {
                 
                 if (stree_is_empty(stack)) {
                     result.error = (ErrorInfo){ERROR_STACK_UNDERFLOW, "Missing left operand", pos};
-                    destroyTree(node->right);
+                    destroyTree(getRight(node));
                     destroyTree(node);
                     stree_destroy(stack);
     
@@ -568,10 +590,10 @@ char* treeToInfix(tree t) {
     return buffer;
 }
 
-void print_error(const ErrorInfo* error) {
+void print_error(ErrorInfo* error) {
     const char* error_type = "";
     
-    switch (error -> code) {
+    switch (getErrCode(error)) {
         case ERROR_EMPTY_INPUT:       
             error_type = "Empty input"; 
             break;
@@ -598,25 +620,11 @@ void print_error(const ErrorInfo* error) {
             break;
     }
     
-    if (error -> position >= 0) 
+    if (getErrPos(error) >= 0) 
         fprintf(stderr, "Error [%s] at position %d: %s\n", 
-                error_type, error -> position, error -> message);
+                error_type, getErrPos(error), getErrMes(error));
     else 
-        fprintf(stderr, "Error [%s]: %s\n", error_type, error -> message);
-}
-
-void print_queue(queue_lex* q) {
-    if (q == NULL) 
-        return;
-    
-    int i = q -> start;
-    int count = 0;
-    
-    while (count < q -> len) {
-        printf("%s ", q -> buf[i].value);
-        i = (i + 1) % q -> max_len;
-        count++;
-    }
+        fprintf(stderr, "Error [%s]: %s\n", error_type, getErrMes(error));
 }
 
 int main() {

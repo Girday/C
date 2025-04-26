@@ -1,6 +1,8 @@
-#include "queue_lex.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
+#include "queue_lex.h"
 
 queue_lex* qlex_create(int max_len) {
     queue_lex* res = malloc(sizeof(queue_lex));
@@ -76,4 +78,18 @@ Token qlex_pop_front(queue_lex* qlex) {
 
 Token qlex_top(queue_lex* qlex) {
     return qlex -> buf[qlex -> start];
+}
+
+void print_queue(queue_lex* qlex) {
+    if (qlex == NULL) 
+        return;
+    
+    int i = qlex -> start;
+    int count = 0;
+    
+    while (count < qlex -> len) {
+        printf("%s ", qlex -> buf[i].value);
+        i = (i + 1) % qlex -> max_len;
+        count++;
+    }
 }
