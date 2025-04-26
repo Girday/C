@@ -70,7 +70,7 @@ read_result readline(queue_lex* out) {
             buffer[0] = c;
             buffer[1] = '\0';
             result.error = (ErrorInfo){ERROR_INVALID_EXPRESSION, 
-                                     "Expression cannot start with this operator", pos};
+                                      "Expression cannot start with this operator", pos};
 
             free(strdup(buffer));
 
