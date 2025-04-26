@@ -475,9 +475,6 @@ tree_result convertToTree(queue_lex* q) {
     return result;
 }
 
-/* ================== ФУНКЦИИ ДЛЯ РАБОТЫ С ДЕРЕВОМ ================== */
-
-// Проверяет необходимость скобок при выводе выражения
 int needsParentheses(Token parent, Token child, int isLeftChild) {
     if (child.type != TOK_OP && child.type != TOK_UNARY_OP) 
         return 0;
@@ -544,7 +541,7 @@ char* treeToInfix(tree t) {
     if (isEmpty(t)) 
         return strdup("");
 
-    int estimatedSize = 100;
+    int estimatedSize = 256;
     char* buffer = malloc(estimatedSize);
     
     if (!buffer) 
@@ -571,9 +568,6 @@ char* treeToInfix(tree t) {
     return buffer;
 }
 
-/* ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ВЫВОДА ================== */
-
-// Печатает информацию об ошибке
 void print_error(const ErrorInfo* error) {
     const char* error_type = "";
     
@@ -625,10 +619,7 @@ void print_queue(queue_lex* q) {
     }
 }
 
-/* ================== ГЛАВНАЯ ФУНКЦИЯ ================== */
-
 int main() {
-    // 1. Инициализация очереди для входного выражения
     queue_lex* input_queue = qlex_create(1);
    
     if (input_queue == NULL) {
@@ -636,7 +627,6 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // 2. Чтение и токенизация выражения
     printf("\nEnter expression: ");
     read_result read_res = readline(input_queue);
    
@@ -647,12 +637,10 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // 3. Вывод токенизированного выражения
     printf("\nInput expression: ");
     print_queue(input_queue);
     printf("\n");
 
-    // 4. Преобразование в постфиксную запись
     queue_lex* postfix_queue = qlex_create(1);
    
     if (postfix_queue == NULL) {
@@ -672,12 +660,10 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // 5. Вывод постфиксной записи
     printf("Postfix notation: ");
     print_queue(postfix_queue);
     printf("\n");
 
-    // 6. Построение дерева выражения
     tree_result tree_res = convertToTree(postfix_queue);
     
     if (tree_res.error.code != RESULT_OK) {
@@ -688,17 +674,14 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    // 7. Вывод дерева выражения
     printf("\nExpression tree:\n");
     printTreePretty(tree_res.root, 0);
 
-    // 8. Упрощение дерева
     deleteUnitMultiply(&tree_res.root);
-    applyReorder(&tree_res.root); // <-- Новое преобразование
+    applyReorder(&tree_res.root);
     printf("\nReordered tree:\n");
     printTreePretty(tree_res.root, 0);
 
-    // 9. Преобразование дерева обратно в инфиксную запись
     char* infix = treeToInfix(tree_res.root);
     
     if (infix) {
@@ -706,7 +689,6 @@ int main() {
         free(infix);
     }
 
-    // 10. Очистка ресурсов
     qlex_destroy(input_queue);
     qlex_destroy(postfix_queue);
     destroyTree(tree_res.root);
