@@ -30,6 +30,7 @@ void printStats() {
 
 int readData(const char *filename, Table *table) {
     FILE *file = fopen(filename, "r");
+
     if (!file) {
         printf("Ошибка открытия файла %s\n", filename);
         return 0;
@@ -50,15 +51,17 @@ int readData(const char *filename, Table *table) {
                 return 0;
             }
             
-            strncpy(table->keys[count], key, KEY_LENGTH);
-            table->keys[count][KEY_LENGTH] = '\0';
-            strcpy(table->values[count], value);
+            strncpy(table -> keys[count], key, KEY_LENGTH);
+            table -> keys[count][KEY_LENGTH] = '\0';
+            strcpy(table -> values[count], value);
+
             count++;
         }
     }
     
     fclose(file);
-    table->count = count;
+    table -> count = count;
+    
     return count;
 }
 
@@ -70,8 +73,8 @@ void writeData(const char *filename, Table *table) {
         return;
     }
     
-    for (int i = 0; i < table->count; i++)
-        fprintf(file, "%s %s\n", table->keys[i], table->values[i]);
+    for (int i = 0; i < table -> count; i++)
+        fprintf(file, "%s %s\n", table -> keys[i], table -> values[i]);
     
     fclose(file);
 }
@@ -79,17 +82,17 @@ void writeData(const char *filename, Table *table) {
 int binarySearch(Table *table, int start, int end, const char *key) {
     if (end <= start) {
         comparison_count++;
-        return (strcmp(key, table->keys[start]) > 0) ? (start + 1) : start;
+        return (strcmp(key, table -> keys[start]) > 0) ? (start + 1) : start;
     }
     
     int mid = (start + end) / 2;
     
     comparison_count++;
-    if (strcmp(key, table->keys[mid]) == 0)
+    if (strcmp(key, table -> keys[mid]) == 0)
         return mid + 1;
     
     comparison_count++;
-    if (strcmp(key, table->keys[mid]) > 0)
+    if (strcmp(key, table -> keys[mid]) > 0)
         return binarySearch(table, mid + 1, end, key);
     
     return binarySearch(table, start, mid - 1, key);
@@ -99,24 +102,24 @@ void binaryInsertionSort(Table *table) {
     comparison_count = 0;
     movement_count = 0;
     
-    for (int i = 1; i < table->count; i++) {
+    for (int i = 1; i < table -> count; i++) {
         char key[KEY_LENGTH + 1];
         char value[MAX_STRING_LENGTH];
-        strcpy(key, table->keys[i]);
-        strcpy(value, table->values[i]);
+        strcpy(key, table -> keys[i]);
+        strcpy(value, table -> values[i]);
         int j = i - 1;
         
         int location = binarySearch(table, 0, j, key);
         
         while (j >= location) {
-            strcpy(table->keys[j + 1], table->keys[j]);
-            strcpy(table->values[j + 1], table->values[j]);
+            strcpy(table -> keys[j + 1], table -> keys[j]);
+            strcpy(table -> values[j + 1], table -> values[j]);
             movement_count++;
             j--;
         }
         
-        strcpy(table->keys[j + 1], key);
-        strcpy(table->values[j + 1], value);
+        strcpy(table -> keys[j + 1], key);
+        strcpy(table -> values[j + 1], value);
 
         movement_count++;
     }
@@ -124,12 +127,12 @@ void binaryInsertionSort(Table *table) {
 
 int searchByKey(Table *table, const char *key) {
     int left = 0;
-    int right = table->count - 1;
+    int right = table -> count - 1;
     int search_comparisons = 0;
     
     while (left <= right) {
         int mid = left + (right - left) / 2;
-        int cmp = strcmp(key, table->keys[mid]);
+        int cmp = strcmp(key, table -> keys[mid]);
         search_comparisons++;
         
         if (cmp == 0)
@@ -147,10 +150,10 @@ int searchByKey(Table *table, const char *key) {
 void printTable(Table *table, int lines) {
     printf("\nОтсортированная таблица:\n\n");
     
-    int start = (lines > 0 && lines < table->count) ? table->count - lines : 0;
+    int start = (lines > 0 && lines < table -> count) ? table -> count - lines : 0;
     
-    for (int i = start; i < table->count; i++)
-        printf("%s %s\n", table->keys[i], table->values[i]);
+    for (int i = start; i < table -> count; i++)
+        printf("%s %s\n", table -> keys[i], table -> values[i]);
     
     printf("\n");
 }
