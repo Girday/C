@@ -79,23 +79,30 @@ void writeData(const char *filename, Table *table) {
     fclose(file);
 }
 
-int binarySearch(Table *table, int start, int end, const char *key) {
+int binarySearch(Table *table, int start, int end, const char *key, int current_index) {
     if (end <= start) {
         comparison_count++;
-        return (strcmp(key, table -> keys[start]) > 0) ? (start + 1) : start;
+    
+        int cmp = strcmp(key, table->keys[start]);
+        if (cmp > 0) return start + 1;
+        if (cmp < 0) return start;
+    
+        return (current_index > start) ? start + 1 : start;
     }
     
     int mid = (start + end) / 2;
     
     comparison_count++;
-    if (strcmp(key, table -> keys[mid]) == 0)
-        return mid + 1;
+    
+    int cmp = strcmp(key, table->keys[mid]);
+    if (cmp == 0)
+        return (current_index > mid) ? mid + 1 : mid;
     
     comparison_count++;
-    if (strcmp(key, table -> keys[mid]) > 0)
-        return binarySearch(table, mid + 1, end, key);
+    if (cmp > 0)
+        return binarySearch(table, mid + 1, end, key, current_index);
     
-    return binarySearch(table, start, mid - 1, key);
+    return binarySearch(table, start, mid - 1, key, current_index);
 }
 
 void binaryInsertionSort(Table *table) {
@@ -105,22 +112,21 @@ void binaryInsertionSort(Table *table) {
     for (int i = 1; i < table -> count; i++) {
         char key[KEY_LENGTH + 1];
         char value[MAX_STRING_LENGTH];
-        strcpy(key, table -> keys[i]);
-        strcpy(value, table -> values[i]);
+        strcpy(key, table->keys[i]);
+        strcpy(value, table->values[i]);
         int j = i - 1;
         
-        int location = binarySearch(table, 0, j, key);
+        int location = binarySearch(table, 0, j, key, i);
         
         while (j >= location) {
-            strcpy(table -> keys[j + 1], table -> keys[j]);
-            strcpy(table -> values[j + 1], table -> values[j]);
+            strcpy(table->keys[j + 1], table->keys[j]);
+            strcpy(table->values[j + 1], table->values[j]);
             movement_count++;
             j--;
         }
         
         strcpy(table -> keys[j + 1], key);
         strcpy(table -> values[j + 1], value);
-
         movement_count++;
     }
 }

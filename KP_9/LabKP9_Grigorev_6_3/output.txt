@@ -1,8 +1,12 @@
-apple 2
 apple 1
+apple 2
 apple 3
 apple 4
 apple 5
+apple 12
 fable 61
+fable 62
 gamer 32
+gamer 1
+gamer 0
 zebra 2

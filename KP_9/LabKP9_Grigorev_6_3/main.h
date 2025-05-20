@@ -29,7 +29,7 @@ void writeData(const char *filename, Table *table);
 void printTable(Table *table, int lines);
 void printStats();
 
-int binarySearch(Table *table, int start, int end, const char *key);
+int binarySearch(Table *table, int start, int end, const char *key, int current_index);
 void binaryInsertionSort(Table *table);
 int searchByKey(Table *table, const char *key);
 

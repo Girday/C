@@ -6,3 +6,7 @@ apple 3
 fable 61
 apple 4
 apple 5
+gamer 0
+apple 12
+gamer 1
+fable 62
