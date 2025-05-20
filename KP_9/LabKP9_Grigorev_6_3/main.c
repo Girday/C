@@ -24,8 +24,8 @@ void printHelp() {
 
 void printStats() {
     printf("\nСтатистика сортировки:\n");
-    printf("Количество сравнений: %d\n", comparison_count);
-    printf("Количество перемещений: %d\n", movement_count);
+    printf("\n  Количество сравнений: %d\n", comparison_count);
+    printf("  Количество перемещений: %d\n", movement_count);
 }
 
 int readData(const char *filename, Table *table) {
@@ -233,9 +233,9 @@ int main(int argc, char *argv[]) {
         int foundIndex = searchByKey(&table, search_key);
 
         if (foundIndex != -1)
-            printf("Поиск по ключу '%s': найдено на позиции %d, значение: %s\n", 
+            printf("\nПоиск по ключу '%s': найдено на позиции %d, значение: %s\n", 
                    search_key, foundIndex + 1, table.values[foundIndex]);
         else
-            printf("Поиск по ключу '%s': не найдено\n", search_key);
+            printf("\nПоиск по ключу '%s': не найдено\n", search_key);
     }
 }
