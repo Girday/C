@@ -4,10 +4,10 @@ cherry пример
 date упорядоченного
 elder текста
 fig для
-grape теста
+grape начального
 honey тестирования
 kiwi сортировки
 lemon методом
 melon двоичных
 nut вставок
-pear и
+pear !

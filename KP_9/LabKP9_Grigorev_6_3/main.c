@@ -1,24 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <io.h> // Для функции _access в Windows
-
-#define MAX_STRING_LENGTH 256
-#define MAX_RECORDS 1000
+#include "main.h"
 
 // Счетчики операций
 int comparison_count = 0;
 int movement_count = 0;
 
-// Структура таблицы №3 (пара ключ-значение)
-typedef struct {
-    char key[MAX_STRING_LENGTH];
-    char value[MAX_STRING_LENGTH];
-} Record;
+// Функция для настройки кодировки консоли
+void setupConsole() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+}
 
 // Функция для чтения данных из файла
-int readData(const char *filename, Record *table) {
+int readData(const char *filename, Table *table) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         printf("Ошибка открытия файла %s\n", filename);
@@ -26,213 +19,164 @@ int readData(const char *filename, Record *table) {
     }
     
     int count = 0;
-    while (count < MAX_RECORDS && fscanf(file, "%s %s", table[count].key, table[count].value) == 2) {
-        count++;
+    char line[MAX_STRING_LENGTH * 2];
+    
+    while (count < MAX_RECORDS && fgets(line, sizeof(line), file)) {
+        char *key = strtok(line, " \n");
+        char *value = strtok(NULL, "\n");
+        
+        if (key && value) {
+            // Проверка длины ключа
+            if (strlen(key) > KEY_LENGTH) {
+                printf("Ошибка: ключ '%s' длиннее %d знаков\n", key, KEY_LENGTH);
+                fclose(file);
+                return 0;
+            }
+            
+            strncpy(table->keys[count], key, KEY_LENGTH);
+            table->keys[count][KEY_LENGTH] = '\0';  // Гарантируем завершающий нуль
+            strcpy(table->values[count], value);
+            count++;
+        }
     }
     
     fclose(file);
+    table->count = count;
     return count;
 }
 
 // Функция для записи данных в файл
-void writeData(const char *filename, Record *table, int count) {
+void writeData(const char *filename, Table *table) {
     FILE *file = fopen(filename, "w");
     if (!file) {
         printf("Ошибка открытия файла %s для записи\n", filename);
         return;
     }
     
-    for (int i = 0; i < count; i++) {
-        fprintf(file, "%s %s\n", table[i].key, table[i].value);
+    for (int i = 0; i < table->count; i++) {
+        fprintf(file, "%s %s\n", table->keys[i], table->values[i]);
     }
     
     fclose(file);
 }
 
 // Функция для выполнения двоичного поиска позиции вставки
-int binarySearch(Record *table, int start, int end, const char *key) {
+int binarySearch(Table *table, int start, int end, const char *key) {
     if (end <= start) {
-        comparison_count++; // Сравнение для условия в if
-        return (strcmp(key, table[start].key) > 0) ? (start + 1) : start;
+        comparison_count++;
+        return (strcmp(key, table->keys[start]) > 0) ? (start + 1) : start;
     }
     
     int mid = (start + end) / 2;
     
-    comparison_count++; // Сравнение для условия в if ниже
-    if (strcmp(key, table[mid].key) == 0) {
+    comparison_count++;
+    if (strcmp(key, table->keys[mid]) == 0)
         return mid + 1;
-    }
     
-    comparison_count++; // Сравнение для условия в if ниже
-    if (strcmp(key, table[mid].key) > 0) {
+    comparison_count++;
+    if (strcmp(key, table->keys[mid]) > 0)
         return binarySearch(table, mid + 1, end, key);
-    }
     
     return binarySearch(table, start, mid - 1, key);
 }
 
 // Метод двоичной вставки
-void binaryInsertionSort(Record *table, int count) {
-    // Сброс счетчиков операций
+void binaryInsertionSort(Table *table) {
     comparison_count = 0;
     movement_count = 0;
     
-    for (int i = 1; i < count; i++) {
-        Record key = table[i];
+    for (int i = 1; i < table->count; i++) {
+        char key[KEY_LENGTH + 1];
+        char value[MAX_STRING_LENGTH];
+        strcpy(key, table->keys[i]);
+        strcpy(value, table->values[i]);
         int j = i - 1;
         
-        // Найти позицию для вставки с помощью двоичного поиска
-        int location = binarySearch(table, 0, j, key.key);
+        int location = binarySearch(table, 0, j, key);
         
-        // Сдвинуть все элементы после location вправо
         while (j >= location) {
-            table[j + 1] = table[j];
-            movement_count++; // Инкремент при каждом перемещении
+            strcpy(table->keys[j + 1], table->keys[j]);
+            strcpy(table->values[j + 1], table->values[j]);
+            movement_count++;
             j--;
         }
         
-        table[j + 1] = key;
-        movement_count++; // Инкремент для финального помещения ключа
+        strcpy(table->keys[j + 1], key);
+        strcpy(table->values[j + 1], value);
+        movement_count++;
     }
 }
 
 // Функция для поиска записи по ключу (бинарный поиск)
-int searchByKey(Record *table, int count, const char *key) {
+int searchByKey(Table *table, const char *key) {
     int left = 0;
-    int right = count - 1;
+    int right = table->count - 1;
     int search_comparisons = 0;
     
     while (left <= right) {
         int mid = left + (right - left) / 2;
-        int cmp = strcmp(key, table[mid].key);
+        int cmp = strcmp(key, table->keys[mid]);
         search_comparisons++;
         
-        if (cmp == 0) {
-            printf("Поиск выполнен за %d сравнений\n", search_comparisons);
-            return mid; // Ключ найден
-        }
+        if (cmp == 0)
+            return mid;
         
-        if (cmp > 0) {
-            left = mid + 1; // Искать в правой половине
-        } else {
-            right = mid - 1; // Искать в левой половине
-        }
+        if (cmp > 0)
+            left = mid + 1;
+        else
+            right = mid - 1;
     }
     
-    printf("Поиск выполнен за %d сравнений\n", search_comparisons);
-    return -1; // Ключ не найден
-}
-
-// Функция для вывода статистики сортировки
-void printSortStats(clock_t start, clock_t end, int count) {
-    double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Время сортировки: %.6f секунд\n", time_spent);
-    printf("Количество записей: %d\n", count);
-    printf("Количество сравнений: %d\n", comparison_count);
-    printf("Количество перемещений: %d\n", movement_count);
-    // Среднее число сравнений на одну запись
-    printf("Среднее число сравнений на запись: %.2f\n", (float)comparison_count / count);
-    // Среднее число перемещений на одну запись
-    printf("Среднее число перемещений на запись: %.2f\n", (float)movement_count / count);
+    return -1;
 }
 
 // Функция для вывода отсортированной таблицы
-void printTable(Record *table, int count) {
-    printf("Отсортированная таблица (первые 10 записей или меньше):\n");
-    int limit = (count < 10) ? count : 10;
+void printTable(Table *table) {
+    printf("Отсортированная таблица:\n");
     
-    for (int i = 0; i < limit; i++) {
-        printf("%s %s\n", table[i].key, table[i].value);
+    for (int i = 0; i < table->count; i++) {
+        printf("%s %s\n", table->keys[i], table->values[i]);
     }
     printf("\n");
 }
 
-// Функция для создания отчета о эффективности
-// void writeReport(const char *filename, const char *dataType, int count, int comparisons, int movements, double time) {
-//     FILE *file;
+int main(int argc, char *argv[]) {
+    setupConsole();
     
-//     // Если файл не существует, создаем его и пишем заголовок
-//     if (_access(filename, 0) != 0) {
-//         file = fopen(filename, "w");
-//         fprintf(file, "Отчет о эффективности метода двоичной вставки\n");
-//         fprintf(file, "================================================\n\n");
-//         fprintf(file, "| Тип данных | Кол-во записей | Сравнения | Перемещения | Время (сек) | Ср. сравнений | Ср. перемещений |\n");
-//         fprintf(file, "|------------|----------------|-----------|-------------|-------------|---------------|----------------|\n");
-//     } else {
-//         file = fopen(filename, "a");
-//     }
+    if (argc != 2) {
+        printf("Использование: %s <входной_файл>\n", argv[0]);
+        return 1;
+    }
     
-//     if (!file) {
-//         printf("Ошибка при открытии файла отчета\n");
-//         return;
-//     }
-    
-//     fprintf(file, "| %-10s | %-14d | %-9d | %-11d | %-11.6f | %-13.2f | %-14.2f |\n", 
-//            dataType, count, comparisons, movements, time, (float)comparisons / count, (float)movements / count);
-    
-//     fclose(file);
-// }
-
-int main() {
-    Record table[MAX_RECORDS];
+    Table table;
     int count;
     clock_t start, end;
-    double time_spent;
     
-    // Создание файла отчета
-    // const char *reportFile = "report.txt";
-    // remove(reportFile); // Удаляем предыдущий отчет, если существует
+    // Чтение данных из входного файла
+    count = readData(argv[1], &table);
+    if (count == 0) {
+        printf("Не удалось прочитать данные из файла %s\n", argv[1]);
+        return 1;
+    }
     
-    // Обработка файла со смешанными данными
-    count = readData("tests/mix.txt", table);
+    // Сортировка данных
     start = clock();
-    binaryInsertionSort(table, count);
+    binaryInsertionSort(&table);
     end = clock();
-    time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-    writeData("results/mix_s.txt", table, count);
     
-    printf("Статистика для mix.txt:\n");
-    printSortStats(start, end, count);
-    printTable(table, count);
-    // writeReport(reportFile, "Смешанные", count, comparison_count, movement_count, time_spent);
+    // Запись отсортированных данных в output.txt
+    writeData("output.txt", &table);
+    
+    // Вывод статистики и отсортированной таблицы
+    printTable(&table);
     
     // Демонстрация поиска по ключу
     const char *searchKey = "melon";
-    int foundIndex = searchByKey(table, count, searchKey);
-    if (foundIndex != -1) {
-        printf("Поиск по ключу '%s': найдено на позиции %d, значение: %s\n\n", 
-               searchKey, foundIndex + 1, table[foundIndex].value);
-    } else {
-        printf("Поиск по ключу '%s': не найдено\n\n", searchKey);
-    }
+    int foundIndex = searchByKey(&table, searchKey);
     
-    // Обработка файла с упорядоченными данными
-    count = readData("tests/straight.txt", table);
-    start = clock();
-    binaryInsertionSort(table, count);
-    end = clock();
-    time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-    writeData("results/straight_s.txt", table, count);
-    
-    printf("Статистика для straight.txt:\n");
-    printSortStats(start, end, count);
-    printTable(table, count);
-    // writeReport(reportFile, "Упорядоч.", count, comparison_count, movement_count, time_spent);
-    
-    // Обработка файла с обратно упорядоченными данными
-    count = readData("tests/reverse.txt", table);
-    start = clock();
-    binaryInsertionSort(table, count);
-    end = clock();
-    time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-    writeData("results/reverse_s.txt", table, count);
-    
-    printf("Статистика для reverse.txt:\n");
-    printSortStats(start, end, count);
-    printTable(table, count);
-    // writeReport(reportFile, "Обратные", count, comparison_count, movement_count, time_spent);
-    
-    printf("\nОтчет сохранен в файле %s\n", reportFile);
-    
-    return 0;
+    if (foundIndex != -1)
+        printf("Поиск по ключу '%s': найдено на позиции %d, значение: %s\n", 
+               searchKey, foundIndex + 1, table.values[foundIndex]);
+    else
+        printf("Поиск по ключу '%s': не найдено\n", searchKey);
 }
