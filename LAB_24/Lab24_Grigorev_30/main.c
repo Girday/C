@@ -231,8 +231,7 @@ read_result readline(queue_lex* out) {
                 ungetc(next_c, stdin);
 
                 if (prev_type == -1 || prev_type == TOK_OP || prev_type == TOK_UNARY_OP ||
-                   (prev_type == TOK_PAREN && last_paren_type == '(' && 
-                   (next_c == '(' || isalpha(next_c) || isdigit(next_c))))
+                   (prev_type == TOK_PAREN && last_paren_type == '('))
                     token = (Token){strdup("~"), TOK_UNARY_OP};
                 else
                     token = (Token){strdup(buffer), TOK_OP};
