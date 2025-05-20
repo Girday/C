@@ -1,16 +1,33 @@
 #include "main.h"
 
-// Счетчики операций
 int comparison_count = 0;
 int movement_count = 0;
 
-// Функция для настройки кодировки консоли
 void setupConsole() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 }
 
-// Функция для чтения данных из файла
+void printHelp() {
+    printf("Использование: program [опции] <входной_файл>\n\n");
+    printf("Опции:\n");
+    printf("  %s <ключ>    Поиск записи по ключу\n", KEY_SEARCH);
+    printf("  %s [N]       Вывод последних N строк (по умолчанию %d)\n", KEY_TAIL, DEFAULT_TAIL_LINES);
+    printf("  %s           Вывод статистики сортировки\n", KEY_STATS);
+    printf("  %s           Тихий режим (без вывода таблицы)\n", KEY_QUIET);
+    printf("  %s           Показать эту справку\n", KEY_HELP);
+    printf("\nПримеры:\n");
+    printf("  program -s apple input.txt    Поиск записи с ключом 'apple'\n");
+    printf("  program -t 5 input.txt        Вывод последних 5 строк\n");
+    printf("  program -i input.txt          Вывод статистики сортировки\n");
+}
+
+void printStats() {
+    printf("\nСтатистика сортировки:\n");
+    printf("Количество сравнений: %d\n", comparison_count);
+    printf("Количество перемещений: %d\n", movement_count);
+}
+
 int readData(const char *filename, Table *table) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -26,15 +43,15 @@ int readData(const char *filename, Table *table) {
         char *value = strtok(NULL, "\n");
         
         if (key && value) {
-            // Проверка длины ключа
             if (strlen(key) > KEY_LENGTH) {
                 printf("Ошибка: ключ '%s' длиннее %d знаков\n", key, KEY_LENGTH);
                 fclose(file);
+
                 return 0;
             }
             
             strncpy(table->keys[count], key, KEY_LENGTH);
-            table->keys[count][KEY_LENGTH] = '\0';  // Гарантируем завершающий нуль
+            table->keys[count][KEY_LENGTH] = '\0';
             strcpy(table->values[count], value);
             count++;
         }
@@ -45,22 +62,20 @@ int readData(const char *filename, Table *table) {
     return count;
 }
 
-// Функция для записи данных в файл
 void writeData(const char *filename, Table *table) {
     FILE *file = fopen(filename, "w");
+
     if (!file) {
         printf("Ошибка открытия файла %s для записи\n", filename);
         return;
     }
     
-    for (int i = 0; i < table->count; i++) {
+    for (int i = 0; i < table->count; i++)
         fprintf(file, "%s %s\n", table->keys[i], table->values[i]);
-    }
     
     fclose(file);
 }
 
-// Функция для выполнения двоичного поиска позиции вставки
 int binarySearch(Table *table, int start, int end, const char *key) {
     if (end <= start) {
         comparison_count++;
@@ -80,7 +95,6 @@ int binarySearch(Table *table, int start, int end, const char *key) {
     return binarySearch(table, start, mid - 1, key);
 }
 
-// Метод двоичной вставки
 void binaryInsertionSort(Table *table) {
     comparison_count = 0;
     movement_count = 0;
@@ -103,11 +117,11 @@ void binaryInsertionSort(Table *table) {
         
         strcpy(table->keys[j + 1], key);
         strcpy(table->values[j + 1], value);
+
         movement_count++;
     }
 }
 
-// Функция для поиска записи по ключу (бинарный поиск)
 int searchByKey(Table *table, const char *key) {
     int left = 0;
     int right = table->count - 1;
@@ -130,53 +144,89 @@ int searchByKey(Table *table, const char *key) {
     return -1;
 }
 
-// Функция для вывода отсортированной таблицы
-void printTable(Table *table) {
-    printf("Отсортированная таблица:\n");
+void printTable(Table *table, int lines) {
+    printf("\nОтсортированная таблица:\n\n");
     
-    for (int i = 0; i < table->count; i++) {
+    int start = (lines > 0 && lines < table->count) ? table->count - lines : 0;
+    
+    for (int i = start; i < table->count; i++)
         printf("%s %s\n", table->keys[i], table->values[i]);
-    }
+    
     printf("\n");
 }
 
 int main(int argc, char *argv[]) {
     setupConsole();
     
-    if (argc != 2) {
-        printf("Использование: %s <входной_файл>\n", argv[0]);
+    if (argc < 2) {
+        printHelp();
+        return 1;
+    }
+    
+    if (strcmp(argv[1], KEY_HELP) == 0) {
+        printHelp();
+        return 0;
+    }
+    
+    char *input_file = NULL;
+    char *search_key = NULL;
+    int tail_lines = 0;
+    int show_stats = 0;
+    int quiet_mode = 0;
+    
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], KEY_SEARCH) == 0 && i + 1 < argc)
+            search_key = argv[++i];
+
+        else if (strcmp(argv[i], KEY_TAIL) == 0) {
+            if (i + 1 < argc && argv[i + 1][0] != '-')
+                tail_lines = atoi(argv[++i]);
+            else
+                tail_lines = DEFAULT_TAIL_LINES;
+        }
+        else if (strcmp(argv[i], KEY_STATS) == 0)
+            show_stats = 1;
+
+        else if (strcmp(argv[i], KEY_QUIET) == 0)
+            quiet_mode = 1;
+        
+        else if (argv[i][0] != '-')
+            input_file = argv[i];
+    }
+    
+    if (!input_file) {
+        printf("Ошибка: не указан входной файл\n");
+        printHelp();
+
         return 1;
     }
     
     Table table;
     int count;
-    clock_t start, end;
     
-    // Чтение данных из входного файла
-    count = readData(argv[1], &table);
+    count = readData(input_file, &table);
     if (count == 0) {
-        printf("Не удалось прочитать данные из файла %s\n", argv[1]);
+        printf("Не удалось прочитать данные из файла %s\n", input_file);
         return 1;
     }
-    
-    // Сортировка данных
-    start = clock();
+            
     binaryInsertionSort(&table);
-    end = clock();
     
-    // Запись отсортированных данных в output.txt
     writeData("output.txt", &table);
     
-    // Вывод статистики и отсортированной таблицы
-    printTable(&table);
+    if (show_stats)
+        printStats();
     
-    // Демонстрация поиска по ключу
-    const char *searchKey = "melon";
-    int foundIndex = searchByKey(&table, searchKey);
+    if (!quiet_mode)
+        printTable(&table, tail_lines);
     
-    if (foundIndex != -1)
-        printf("Поиск по ключу '%s': найдено на позиции %d, значение: %s\n", 
-               searchKey, foundIndex + 1, table.values[foundIndex]);
-    else
-        printf("Поиск по ключу '%s': не найдено\n", searchKey);
+    if (search_key) {
+        int foundIndex = searchByKey(&table, search_key);
+
+        if (foundIndex != -1)
+            printf("Поиск по ключу '%s': найдено на позиции %d, значение: %s\n", 
+                   search_key, foundIndex + 1, table.values[foundIndex]);
+        else
+            printf("Поиск по ключу '%s': не найдено\n", search_key);
+    }
 }

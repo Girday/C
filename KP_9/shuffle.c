@@ -8,18 +8,16 @@
 #define MAX_RECORDS 1000
 
 typedef struct {
-    char key[6];  // 5 символов + нулевой символ
+    char key[6];
     char value[MAX_STRING_LENGTH];
 } Record;
 
-// Функция для обмена двух записей
 void swap(Record *a, Record *b) {
     Record temp = *a;
     *a = *b;
     *b = temp;
 }
 
-// Функция для перемешивания массива (алгоритм Фишера-Йейтса)
 void shuffle(Record *array, int n) {
     srand(time(NULL));
     for (int i = n - 1; i > 0; i--) {
