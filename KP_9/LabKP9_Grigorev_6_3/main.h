@@ -8,7 +8,7 @@
 #define MAX_STRING_LENGTH 256
 #define MAX_RECORDS 1000
 #define KEY_LENGTH 5
-#define DEFAULT_TAIL_LINES 10
+#define DEFAULT_TAIL_LINES 12
 
 #define KEY_SEARCH "-s"    
 #define KEY_TAIL "-t"      
