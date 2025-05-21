@@ -1,5 +1,4 @@
 #include "main.h"
-#include <sys/stat.h>
 
 int comparison_count = 0;
 int movement_count = 0;
