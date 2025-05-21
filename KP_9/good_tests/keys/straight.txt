@@ -1,0 +1,13 @@
+apple
+berry
+cherry
+date
+elder
+fig
+grape
+honey
+kiwi
+lemon
+melon
+nut
+pear
