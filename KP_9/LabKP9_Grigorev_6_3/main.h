@@ -31,7 +31,7 @@ void printStats();
 
 int binarySearch(Table *table, int start, int end, const char *key, int current_index);
 void binaryInsertionSort(Table *table);
-int searchByKey(Table *table, const char *key);
+void searchByKey(Table *table, const char *key);
 
 extern int comparison_count;
 extern int movement_count;

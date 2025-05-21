@@ -1,6 +1,6 @@
 apple
 berry
-cherry
+chery
 date
 elder
 fig

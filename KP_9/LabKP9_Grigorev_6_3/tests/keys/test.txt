@@ -1,5 +1,8 @@
-alpha
-beta
-gamma
-delta
-echo 
+f
+a
+d
+a
+b
+a
+g
+c
